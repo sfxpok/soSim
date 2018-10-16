@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+
+#include <unistd.h>
 
 // Estruturas de dados
 
@@ -16,3 +19,7 @@ struct shop {
 };
 
 struct shop simulador;
+
+// Outros
+
+pthread_t threadClient;

@@ -3,7 +3,7 @@
 #define MAXFILE 128
 
 void main () {
-    readConfig();
+    createClient();
 }
 
 void readConfig() {
@@ -55,8 +55,25 @@ void readConfig() {
 
         fclose(fileConfig);
         printf("Inicialização feita.\n");
-        printf("%s", simulador);
+        printf("%d", simulador.closingTime);
         
     }
+
+}
+
+int clientTID;
+int clientTID2;
+
+void* computeClient(void* ptr) {
+    printf("test\n");
+}
+
+void createClient() {
+
+    clientTID = pthread_create(&threadClient, 0, computeClient, 0);
+    clientTID2 = pthread_create(&threadClient, 0, computeClient, 0);
+
+    printf("%d\n", clientTID);
+    printf("%d\n", clientTID2);
 
 }
