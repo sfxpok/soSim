@@ -14,3 +14,5 @@ struct shop {
     int isItOpen;
     int durationOpen;
 };
+
+struct shop simulador;
