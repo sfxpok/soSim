@@ -3,7 +3,7 @@
 #define MAXFILE 128
 
 void main () {
-    createClient();
+    readConfig();
 }
 
 void readConfig() {
@@ -27,10 +27,7 @@ void readConfig() {
 
         while(fscanf(fileConfig, "%s: %d\n", param, &value) != EOF) {
 
-            if (strcmp(param, "maxClients") == 0) {
-                simulador.maxClients = value;
-            }
-
+            if (strcmp(param, "maxClients") == 0) simulador.maxClients = value;
             else if (strcmp(param, "spawnedClients") == 0) simulador.spawnedClients = value;
             else if (strcmp(param, "openingTime") == 0) simulador.openingTime = value;
             else if (strcmp(param, "closingTime") == 0) simulador.closingTime = value;
@@ -55,13 +52,14 @@ void readConfig() {
 
         fclose(fileConfig);
         printf("Inicialização feita.\n");
-        printf("%d", simulador.closingTime);
+        printf("%d", simulador.spawnedClients);
+        printf("%d", simulador.openingTime);
         
     }
 
 }
 
-int clientTID;
+/* int clientTID;
 int clientTID2;
 
 void* computeClient(void* ptr) {
@@ -76,4 +74,4 @@ void createClient() {
     printf("%d\n", clientTID);
     printf("%d\n", clientTID2);
 
-}
+} */
