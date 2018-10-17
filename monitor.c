@@ -1,20 +1,20 @@
 #include "libs.h"
 
-void main() {
-    printMenu();
-}
-
-void printMenu() {
+void displayMenu() {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                            Loja                             │\n");
     printf("│                    Sistemas Operativos 18/19                │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
-void printStats() {
+void displayStats() {
     
 }
 
 void outputMenu() {
 
+}
+
+void main() {
+    displayMenu();
 }
