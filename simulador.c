@@ -9,22 +9,22 @@ void readConfig() {
     char param[MAXFILE];
     int value;
 
-    // Valores pré-definidos
-    simulador.maxClients = 3;
-    simulador.spawnedClients = 6;
-    estatistica.avgTimeArrivalClients = 3;
-    simulador.timeToServePonchaA = 2;
-    simulador.timeToServePonchaB = 3;
-    simulador.timeToServePonchaC = 4;
-    simulador.probWithdrawl = 2;
-    simulador.openingTime = 10;
-    simulador.closingTime = 13;
-    simulador.timeCounter = 0;
-    simulador.isItOpen = 1;
-    estatistica.durationOpen = 0;
-
     if (fileConfig == NULL) {
         printf("Erro ao abrir o ficheiro. O programa irá usar valores pré-definidos.");
+
+        // Valores pré-definidos
+        simulador.maxClients = 3;
+        simulador.spawnedClients = 6;
+        estatistica.avgTimeArrivalClients = 3;
+        simulador.timeToServePonchaA = 2;
+        simulador.timeToServePonchaB = 3;
+        simulador.timeToServePonchaC = 4;
+        simulador.probWithdrawl = 2;
+        simulador.openingTime = 10;
+        simulador.closingTime = 13;
+        simulador.timeCounter = 0;
+        simulador.isItOpen = 1;
+        estatistica.durationOpen = 0;
     }
 
     else {
