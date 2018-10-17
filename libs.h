@@ -9,18 +9,40 @@
 
 struct shop {
     int maxClients;
+    int maxEmployees;
+    int maxClientsPerEmployee;
     int spawnedClients;
-    int avgTimeArrivalClients;
+    int timeToServePonchaA;
+    int timeToServePonchaB;
+    int timeToServePonchaC;
+    int unitsPonchaA;
+    int unitsPonchaB;
+    int unitsPonchaC;
+    int replacersProducts;
+    int probChangeOrder;
+    int probWithdrawl;
     int openingTime;
     int closingTime;
     int timeCounter;
     int isItOpen;
-    int durationOpen;
 };
 
 struct stats {
-    int soldItems;
     int totalWithdrawls;
+    int durationOpen;
+    int avgTimeArrivalClients;
+    int totalClients;
+    int waitingClientsInLine;
+    int avgTimeWaitingClientsInLine;
+    int totalChangedOrder;
+    int maxEmployeesUsed;
+    int actualEmployeesUsedNow;
+    int unitsSoldPonchaA;
+    int unitsSoldPonchaB;
+    int unitsSoldPonchaC;
+    int avgTimeToServePonchaA;
+    int avgTimeToServePonchaB;
+    int avgTimeToServePonchaC;
 };
 
 // Threads

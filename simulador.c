@@ -6,7 +6,6 @@ void readConfig() {
 
     FILE * fileConfig = fopen("config.conf", "r");
 
-    char line[256];
     char param[MAXFILE];
     int value;
 
@@ -17,7 +16,7 @@ void readConfig() {
     simulador.closingTime = 13;
     simulador.timeCounter = 0;
     simulador.isItOpen = 1;
-    simulador.durationOpen = 0;
+    // simulador.durationOpen = 0;
 
     if (fileConfig == NULL) {
         printf("Erro ao abrir o ficheiro. O programa irá usar valores pré-definidos.");
@@ -35,22 +34,9 @@ void readConfig() {
             else if (strcmp(param, "closingTime") == 0) simulador.closingTime = value;
             else if (strcmp(param, "timeCounter") == 0) simulador.timeCounter = value;
             else if (strcmp(param, "isItOpen") == 0) simulador.isItOpen = value;
-            else if (strcmp(param, "durationOpen") == 0) simulador.durationOpen = value;
+            // else if (strcmp(param, "durationOpen") == 0) simulador.durationOpen = value;
 
         }
-
-/*      char buf[0x1000];
-        struct shop a_shop[500];
-
-        while (fgets(buf, sizeof(buf), fileConfig) != NULL) {
-            if (buf[0] == '#') {
-                continue;
-            }
-            else {
-                fscanf(fileConfig, "%d", &a_shop.maxClients);
-            }
-
-        } */
 
         fclose(fileConfig);
         printf("Inicialização feita.\n");
