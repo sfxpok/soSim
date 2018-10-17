@@ -12,15 +12,15 @@ struct shop {
     int maxEmployees;
     int maxClientsPerEmployee;
     int spawnedClients;
-    int timeToServePonchaA;
-    int timeToServePonchaB;
-    int timeToServePonchaC;
+    int timeToServePonchaA; // importante para inicialização
+    int timeToServePonchaB; // importante para inicialização
+    int timeToServePonchaC; // importante para inicialização
     int unitsPonchaA;
     int unitsPonchaB;
     int unitsPonchaC;
     int replacersProducts;
     int probChangeOrder;
-    int probWithdrawl;
+    int probWithdrawl; // importante para inicialização
     int openingTime;
     int closingTime;
     int timeCounter;
@@ -29,8 +29,7 @@ struct shop {
 
 struct stats {
     int totalWithdrawls;
-    int durationOpen;
-    int avgTimeArrivalClients;
+    int avgTimeArrivalClients; // importante para inicialização
     int totalClients;
     int waitingClientsInLine;
     int avgTimeWaitingClientsInLine;
@@ -43,6 +42,7 @@ struct stats {
     int avgTimeToServePonchaA;
     int avgTimeToServePonchaB;
     int avgTimeToServePonchaC;
+    int durationOpen; // importante para inicialização
 };
 
 // Threads
@@ -52,3 +52,4 @@ struct stats {
 // Inicializações
 
 struct shop simulador;
+struct stats estatistica;
