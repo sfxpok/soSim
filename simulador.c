@@ -1,6 +1,6 @@
 #include "libs.h"
 
-#define MAXFILE 512
+#define MAXFILE 128
 
 void readConfig() {
 
