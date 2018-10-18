@@ -57,23 +57,87 @@ void writeOutputToMonitor() {
     //
 }
 
+void* computeClient(void* ptr) {
+    //
+}
+
+void createClient(int idCliente) {
+
+    printf("Cliente %d acabou de chegar.", idCliente);
+
+}
+
+void giveUpClient(int idCliente) {
+
+    printf("Cliente %d desistiu.", idCliente);
+
+}
+
+void askForPoncha(int idCliente, char charPoncha) {
+
+    switch (charPoncha) {
+        case 'a':
+            // da-lhe poncha A
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+        case 'b':
+            // da-lhe poncha B
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+        case 'c':
+            // da-lhe poncha C
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+    }
+
+}
+
+void givePonchaToClient(int idCliente, char chaPoncha, int idEmployee) {
+    //
+}
+
+void changeOrder() {
+    //
+}
+
+void writeLogFiles() {
+    //
+}
+
+void appendFinalReport() {
+    //
+}
+
+void restockProduct(int idCliente, char charPoncha) {
+
+    switch (charPoncha) {
+        case 'a':
+            // repoe poncha A
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+        case 'b':
+            // repoe poncha B
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+        case 'c':
+            // repoe poncha C
+            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            break;
+    }
+
+}
+
+void addEmployeeToCashier(int idEmployee) {
+    //
+}
+
+void checkIfProductIsOutOfStock(char charPoncha) {
+    //
+}
+
 void main () {
     readConfig();
+
+    // começa a simulação
+
 }
-
-/* int clientTID;
-int clientTID2;
-
-void* computeClient(void* ptr) {
-    printf("test\n");
-}
-
-void createClient() {
-
-    clientTID = pthread_create(&threadClient, 0, computeClient, 0);
-    clientTID2 = pthread_create(&threadClient, 0, computeClient, 0);
-
-    printf("%d\n", clientTID);
-    printf("%d\n", clientTID2);
-
-} */
