@@ -5,6 +5,11 @@
 // #include <pthread.h>
 #include <string.h>
 
+// Variáveis
+
+char* writeToLog;
+char* outputPlz;
+
 // Estruturas de dados
 
 struct shop {

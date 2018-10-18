@@ -15,6 +15,14 @@ void outputMenu() {
 
 }
 
+void pauseShop() {
+    //
+}
+
+void closeShop() {
+    //
+}
+
 void main() {
     displayMenu();
 }

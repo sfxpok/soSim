@@ -67,6 +67,21 @@ void createClient(int idCliente) {
 
 }
 
+void createEmployee(int idEmployee) {
+    
+    printf("O empregado %d chegou à loja.", idEmployee);
+
+}
+
+void calculateRunningTimeShop() {
+    
+    estatistica.durationOpen = (simulador.closingTime - simulador.openingTime) * 60;
+    outputPlz = "A loja está aberta durante %d\n", estatistica.durationOpen;
+    printf("%s", outputPlz);
+    writeLogFiles(outputPlz);
+    
+}
+
 void giveUpClient(int idCliente) {
 
     printf("Cliente %d desistiu.", idCliente);
@@ -78,6 +93,12 @@ void askForPoncha(int idCliente, char charPoncha) {
     switch (charPoncha) {
         case 'a':
             // da-lhe poncha A
+
+            if (simulador.unitsPonchaA < 2) {
+                // cliente espera
+                break;
+            }
+
             printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
             break;
         case 'b':
@@ -100,15 +121,20 @@ void changeOrder() {
     //
 }
 
-void writeLogFiles() {
-    //
+void writeLogFiles(char* writeToLog) {
+    
+    FILE * logFile = fopen("log.txt", "w");
+    
+    fprintf(logFile, "%s", writeToLog);
+
+    fclose(logFile);
 }
 
 void appendFinalReport() {
     //
 }
 
-void restockProduct(int idCliente, char charPoncha) {
+void restockPoncha(int idCliente, char charPoncha) {
 
     switch (charPoncha) {
         case 'a':
@@ -127,7 +153,11 @@ void restockProduct(int idCliente, char charPoncha) {
 
 }
 
-void addEmployeeToCashier(int idEmployee) {
+void moveEmployeeToCashier(int idEmployee) {
+    //
+}
+
+void moveEmployeeToWarehouse(int idEmployee) {
     //
 }
 
@@ -136,8 +166,8 @@ void checkIfProductIsOutOfStock(char charPoncha) {
 }
 
 void main () {
-    readConfig();
 
-    // começa a simulação
+    readConfig();
+    calculateRunningTimeShop();
 
 }
