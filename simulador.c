@@ -1,12 +1,22 @@
 #include "libs.h"
 
-#define MAXFILE 128
+void initSimulation() {
+    readConfig();
+    cleanLogFile();
+}
+
+void cleanLogFile() {
+
+    FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
+    fclose(logFile);
+
+}
 
 void readConfig() {
 
     FILE * fileConfig = fopen("config.conf", "r");
 
-    char param[MAXFILE];
+    char param[128];
     int value;
 
     if (fileConfig == NULL) {
@@ -57,29 +67,50 @@ void writeOutputToMonitor() {
     //
 }
 
-void* computeClient(void* ptr) {
-    //
-}
-
 void createClient(int idCliente) {
 
-    printf("Cliente %d acabou de chegar.", idCliente);
+    // printf("O cliente %d acabou de chegar.\n", idCliente);
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idCliente);
+    writeLogFiles(messageToLog);
 
 }
 
 void createEmployee(int idEmployee) {
     
-    printf("O empregado %d chegou à loja.", idEmployee);
+    // printf("O empregado %d chegou à loja.", idEmployee);
+    snprintf(messageToLog, sizeof(messageToLog), "O empregado %d chegou à loja.", idEmployee);
+    writeLogFiles(messageToLog);
 
 }
 
 void calculateRunningTimeShop() {
     
     estatistica.durationOpen = (simulador.closingTime - simulador.openingTime) * 60;
-    outputPlz = "A loja está aberta durante %d\n", estatistica.durationOpen;
-    printf("%s", outputPlz);
-    writeLogFiles(outputPlz);
+
+    snprintf(messageToLog, sizeof(messageToLog), "A loja está aberta durante %d minutos.\n", estatistica.durationOpen);
+    writeLogFiles(messageToLog);
     
+}
+
+char* getTimeStamp() {
+
+    // Get current time
+    time(&UNIXts);
+
+    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
+    ts = *localtime(&UNIXts);
+    strftime(hmsTimeStamp, sizeof(hmsTimeStamp), "%H:%M:%S", &ts);
+    return hmsTimeStamp;
+}
+
+void writeLogFiles(char* writeToLog) {
+    
+    FILE * logFile = fopen("log.txt", "a");
+    
+    char *timeStamp = getTimeStamp();
+    fprintf(logFile, "%s %s", timeStamp, writeToLog);
+
+    fclose(logFile);
 }
 
 void giveUpClient(int idCliente) {
@@ -121,15 +152,6 @@ void changeOrder() {
     //
 }
 
-void writeLogFiles(char* writeToLog) {
-    
-    FILE * logFile = fopen("log.txt", "w");
-    
-    fprintf(logFile, "%s", writeToLog);
-
-    fclose(logFile);
-}
-
 void appendFinalReport() {
     //
 }
@@ -167,7 +189,9 @@ void checkIfProductIsOutOfStock(char charPoncha) {
 
 void main () {
 
-    readConfig();
+    initSimulation();
+    // readConfig();
     calculateRunningTimeShop();
+    createClient(2);
 
 }

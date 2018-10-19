@@ -4,11 +4,16 @@
 #include <stdlib.h>
 // #include <pthread.h>
 #include <string.h>
+#include <time.h> 
 
 // Variáveis
 
+char messageToLog[128];
 char* writeToLog;
-char* outputPlz;
+
+time_t     UNIXts;
+struct tm  ts;
+char       hmsTimeStamp[80];
 
 // Estruturas de dados
 
