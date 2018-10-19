@@ -1,4 +1,5 @@
 **/.vscode
 *.o
+*.txt
 simulador
 monitor
