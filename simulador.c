@@ -1,8 +1,14 @@
 #include "libs.h"
 
-void initSimulation() {
-    readConfig();
-    cleanLogFile();
+char* getTimeStamp() {
+
+    // Get current time
+    time(&UNIXts);
+
+    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
+    ts = *localtime(&UNIXts);
+    strftime(hmsTimeStamp, sizeof(hmsTimeStamp), "%H:%M:%S", &ts);
+    return hmsTimeStamp;
 }
 
 void cleanLogFile() {
@@ -10,6 +16,16 @@ void cleanLogFile() {
     FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
     fclose(logFile);
 
+}
+
+void writeLogFiles(char* writeToLog) {
+    
+    FILE * logFile = fopen("log.txt", "a");
+    
+    char *timeStamp = getTimeStamp();
+    fprintf(logFile, "%s %s", timeStamp, writeToLog);
+
+    fclose(logFile);
 }
 
 void readConfig() {
@@ -63,14 +79,17 @@ void readConfig() {
 
 }
 
-void writeOutputToMonitor() {
-    //
+void writeOutputToMonitor(char* writeToMonitor) {
+    
+    printf("%s", writeToMonitor);
+
 }
 
-void createClient(int idCliente) {
+void createClient(int idClient) {
 
-    // printf("O cliente %d acabou de chegar.\n", idCliente);
-    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idCliente);
+    // printf("O cliente %d acabou de chegar.\n", idClient);
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
+    writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
 
 }
@@ -78,7 +97,8 @@ void createClient(int idCliente) {
 void createEmployee(int idEmployee) {
     
     // printf("O empregado %d chegou à loja.", idEmployee);
-    snprintf(messageToLog, sizeof(messageToLog), "O empregado %d chegou à loja.", idEmployee);
+    snprintf(messageToLog, sizeof(messageToLog), "O empregado %d chegou à loja.\n", idEmployee);
+    writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
 
 }
@@ -88,63 +108,66 @@ void calculateRunningTimeShop() {
     estatistica.durationOpen = (simulador.closingTime - simulador.openingTime) * 60;
 
     snprintf(messageToLog, sizeof(messageToLog), "A loja está aberta durante %d minutos.\n", estatistica.durationOpen);
+    writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
     
 }
 
-char* getTimeStamp() {
+void giveUpClient(int idClient) {
 
-    // Get current time
-    time(&UNIXts);
-
-    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
-    ts = *localtime(&UNIXts);
-    strftime(hmsTimeStamp, sizeof(hmsTimeStamp), "%H:%M:%S", &ts);
-    return hmsTimeStamp;
-}
-
-void writeLogFiles(char* writeToLog) {
-    
-    FILE * logFile = fopen("log.txt", "a");
-    
-    char *timeStamp = getTimeStamp();
-    fprintf(logFile, "%s %s", timeStamp, writeToLog);
-
-    fclose(logFile);
-}
-
-void giveUpClient(int idCliente) {
-
-    printf("Cliente %d desistiu.", idCliente);
+    // printf("Cliente %d desistiu.\n", idClient);
+    snprintf(messageToLog, sizeof(messageToLog), "Cliente %d desistiu.\n", idClient);
+    writeOutputToMonitor(messageToLog);
+    writeLogFiles(messageToLog);
 
 }
 
-void askForPoncha(int idCliente, char charPoncha) {
+void askForPoncha(int idClient, char charPoncha) {
+
+    // printf("O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
 
     switch (charPoncha) {
-        case 'a':
+        case 'A':
             // da-lhe poncha A
 
             if (simulador.unitsPonchaA < 2) {
                 // cliente espera
-                break;
             }
 
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+            writeOutputToMonitor(messageToLog);
+            writeLogFiles(messageToLog);
+
             break;
-        case 'b':
+        case 'B':
             // da-lhe poncha B
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+
+            if (simulador.unitsPonchaB < 2) {
+                // cliente espera
+            }
+
+            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+            writeOutputToMonitor(messageToLog);
+            writeLogFiles(messageToLog);
+
             break;
-        case 'c':
+        case 'C':
             // da-lhe poncha C
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+
+            if (simulador.unitsPonchaC < 2) {
+                // cliente espera
+            }
+
+            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+            writeOutputToMonitor(messageToLog);
+            writeLogFiles(messageToLog);
+
             break;
     }
 
 }
 
-void givePonchaToClient(int idCliente, char chaPoncha, int idEmployee) {
+void givePonchaToClient(int idClient, char charPoncha, int idEmployee) {
     //
 }
 
@@ -156,20 +179,20 @@ void appendFinalReport() {
     //
 }
 
-void restockPoncha(int idCliente, char charPoncha) {
+void restockPoncha(int idEmployee, char charPoncha) {
 
     switch (charPoncha) {
         case 'a':
             // repoe poncha A
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
             break;
         case 'b':
             // repoe poncha B
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
             break;
         case 'c':
             // repoe poncha C
-            printf("O cliente %d pediu pela poncha %c", idCliente, charPoncha);
+            printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
             break;
     }
 
@@ -187,11 +210,18 @@ void checkIfProductIsOutOfStock(char charPoncha) {
     //
 }
 
+void initSimulation() {
+    readConfig();
+    cleanLogFile();
+}
+
 void main () {
 
     initSimulation();
     // readConfig();
     calculateRunningTimeShop();
     createClient(2);
+    createEmployee(1);
+    askForPoncha(2, 'B');
 
 }
