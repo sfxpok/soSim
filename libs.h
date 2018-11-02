@@ -10,6 +10,7 @@
 
 char messageToLog[128];
 char* writeToLog;
+FILE* logFile;
 
 time_t     UNIXts;
 struct tm  ts;

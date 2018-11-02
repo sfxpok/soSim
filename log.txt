@@ -1,1 +1,4 @@
-A loja está aberta durante %d
+18:59:33 A loja está aberta durante 120 minutos.
+18:59:33 O cliente 2 acabou de chegar.
+18:59:33 O empregado 1 chegou à loja.
+18:59:33 O cliente 2 pediu pela poncha B.

@@ -20,12 +20,24 @@ void cleanLogFile() {
 
 void writeLogFiles(char* writeToLog) {
     
-    FILE * logFile = fopen("log.txt", "a");
+    // openLogFile();
     
     char *timeStamp = getTimeStamp();
     fprintf(logFile, "%s %s", timeStamp, writeToLog);
 
-    fclose(logFile);
+    // closeFile(logFile);
+}
+
+void openLogFile() {
+
+    logFile = fopen("log.txt", "a");
+
+}
+
+void closeFile(FILE* fileToClose) {
+
+    fclose(fileToClose);
+
 }
 
 void readConfig() {
@@ -213,6 +225,7 @@ void checkIfProductIsOutOfStock(char charPoncha) {
 void initSimulation() {
     readConfig();
     cleanLogFile();
+    openLogFile();
 }
 
 void main () {
@@ -223,5 +236,7 @@ void main () {
     createClient(2);
     createEmployee(1);
     askForPoncha(2, 'B');
+
+    closeFile(logFile);
 
 }
