@@ -101,6 +101,14 @@ void createClient(int idClient) {
 
     // printf("O cliente %d acabou de chegar.\n", idClient);
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
+    
+    pthread_t someClient;
+    pthread_create(&someClient, NULL, createClient, NULL);
+    printf("teste\n");
+    pthread_join(someClient, NULL);
+    printf("teste2\n");
+    scanf;
+    
     writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
 
