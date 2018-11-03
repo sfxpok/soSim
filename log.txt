@@ -1,5 +1,3 @@
-13:19:05 O cliente 3 acabou de chegar.
-13:19:05 O cliente 2 acabou de chegar.
-13:19:05 O cliente 2 acabou de chegar.
-13:19:05 O empregado 1 chegou à loja.
-13:19:05 O cliente 2 pediu pela poncha B.
+16:27:35 O empregado 4 chegou à loja.
+16:27:35 O empregado 4 chegou à loja.
+16:27:35 O cliente 2 pediu pela poncha B.

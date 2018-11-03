@@ -102,7 +102,7 @@ void createClient(int idClient) {
     // printf("O cliente %d acabou de chegar.\n", idClient);
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
     
-    // printf("PID do cliente: %d\n", getpid());
+    printf("PID do cliente: %d\n", getpid());
     
     writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
@@ -238,7 +238,15 @@ void *THREADCreateClient(void *tid) {
 
     createClient(3);
 
-    return 0;
+    // return 0;
+
+}
+
+void *THREADCreateEmployee(void *tid) {
+
+    printf("PID do empregado: %d\n", getpid());
+
+    createEmployee(4);
 
 }
 
@@ -246,6 +254,11 @@ void initThreads() {
 
     pthread_t tClient;
     pthread_create(&tClient, NULL, &THREADCreateClient, NULL);
+
+    pthread_t tEmployee;
+    pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
+
+    printf("dd\n");
 
 }
 
@@ -255,8 +268,8 @@ void main () {
     initThreads();
     // readConfig();
     calculateRunningTimeShop();
-    createClient(2);
-    createEmployee(1);
+    // createClient(2);
+    // createEmployee(1);
     askForPoncha(2, 'B');
 
     closeFile(logFile);
