@@ -1,4 +1,5 @@
-18:59:33 A loja está aberta durante 120 minutos.
-18:59:33 O cliente 2 acabou de chegar.
-18:59:33 O empregado 1 chegou à loja.
-18:59:33 O cliente 2 pediu pela poncha B.
+13:19:05 O cliente 3 acabou de chegar.
+13:19:05 O cliente 2 acabou de chegar.
+13:19:05 O cliente 2 acabou de chegar.
+13:19:05 O empregado 1 chegou à loja.
+13:19:05 O cliente 2 pediu pela poncha B.

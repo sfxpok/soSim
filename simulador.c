@@ -102,12 +102,7 @@ void createClient(int idClient) {
     // printf("O cliente %d acabou de chegar.\n", idClient);
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
     
-    pthread_t someClient;
-    pthread_create(&someClient, NULL, createClient, NULL);
-    printf("teste\n");
-    pthread_join(someClient, NULL);
-    printf("teste2\n");
-    scanf;
+    // printf("PID do cliente: %d\n", getpid());
     
     writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
@@ -236,9 +231,28 @@ void initSimulation() {
     openLogFile();
 }
 
+void *THREADCreateClient(void *tid) {
+
+    printf("I reached the thread function\n");
+    printf("PID do cliente: %d\n", getpid());
+
+    createClient(3);
+
+    return 0;
+
+}
+
+void initThreads() {
+
+    pthread_t tClient;
+    pthread_create(&tClient, NULL, &THREADCreateClient, NULL);
+
+}
+
 void main () {
 
     initSimulation();
+    initThreads();
     // readConfig();
     calculateRunningTimeShop();
     createClient(2);

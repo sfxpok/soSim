@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-#include <time.h> 
+#include <time.h>
+
+#include <sys/types.h>
+#include <unistd.h>
 
 // Variáveis
 
