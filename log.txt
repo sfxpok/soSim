@@ -1,3 +1,4 @@
-16:27:35 O empregado 4 chegou à loja.
-16:27:35 O empregado 4 chegou à loja.
-16:27:35 O cliente 2 pediu pela poncha B.
+13:49:46 O cliente 3 acabou de chegar.
+13:49:46 O empregado 4 chegou à loja.
+13:49:46 A loja está aberta durante 120 minutos.
+13:49:46 O cliente 2 pediu pela poncha B.

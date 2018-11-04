@@ -101,9 +101,6 @@ void createClient(int idClient) {
 
     // printf("O cliente %d acabou de chegar.\n", idClient);
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
-    
-    printf("PID do cliente: %d\n", getpid());
-    
     writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
 
@@ -233,7 +230,7 @@ void initSimulation() {
 
 void *THREADCreateClient(void *tid) {
 
-    printf("I reached the thread function\n");
+    // printf("I reached the thread function\n");
     printf("PID do cliente: %d\n", getpid());
 
     createClient(3);
@@ -252,13 +249,20 @@ void *THREADCreateEmployee(void *tid) {
 
 void initThreads() {
 
+    // é preciso mais 3 threads: mensagens (entre sim e mon), 
+    // gerente e repositor
+
     pthread_t tClient;
     pthread_create(&tClient, NULL, &THREADCreateClient, NULL);
+
+    pthread_join(tClient, NULL);
 
     pthread_t tEmployee;
     pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
 
-    printf("dd\n");
+    pthread_join(tEmployee, NULL);
+
+    // printf("dd\n");
 
 }
 

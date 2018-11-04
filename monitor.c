@@ -23,6 +23,14 @@ void closeShop() {
     //
 }
 
+void initThreads() {
+
+    pthread_t tMonitor;
+    // pthread_create(tMonitor, NULL, NULL, NULL);
+
+}
+
 void main() {
     displayMenu();
+    initThreads();
 }
