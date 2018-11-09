@@ -69,6 +69,7 @@ void askForInput() {
             
         }
 
+        // e preciso mudar a condicao do while para o op, eventualmente
         // op = getchar();
 
     } while(halt != 1);

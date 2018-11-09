@@ -27,6 +27,11 @@ time_t     UNIXts;
 struct tm  ts;
 char       hmsTimeStamp[80];
 
+// Variáveis - SOCKETS
+
+	int sockfd, newsockfd, clilen, childpid, servlen;
+	struct sockaddr_un cli_addr, serv_addr;
+
 // Estruturas de dados
 
 struct shop {

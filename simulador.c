@@ -249,6 +249,9 @@ void *THREADCreateEmployee(void *tid) {
 
 void initThreads() {
 
+    pthread_t tMessages;
+    // pthread_create(&tMessages, NULL, &messages, NULL);
+
     // é preciso mais 3 threads: mensagens (entre sim e mon), 
     // gerente e repositor
 
@@ -266,10 +269,38 @@ void initThreads() {
 
 }
 
+void initCommunication() {
+
+    /* Cria socket stream */
+
+	if ((sockfd = socket(AF_UNIX,SOCK_STREAM,0)) < 0)
+		perror("server: can't open stream socket");
+
+	/* Primeiro uma limpeza preventiva!
+	   Dados para o socket stream: tipo + nome do ficheiro.
+         O ficheiro serve para que os clientes possam identificar o servidor */
+
+	// bzero((char *)&serv_addr, sizeof(serv_addr));
+	serv_addr.sun_family = AF_UNIX;
+	strcpy(serv_addr.sun_path, UNIXSTR_PATH);
+
+      /* O servidor  quem cria o ficheiro que identifica o socket.
+         Elimina o ficheiro, para o caso de algo ter ficado pendurado.
+         Em seguida associa o socket ao ficheiro. 
+         A dimenso a indicar ao bind no  a da estrutura, pois depende
+         do nome do ficheiro */
+
+	servlen = strlen(serv_addr.sun_path) + sizeof(serv_addr.sun_family);
+    if(connect(sockfd, (struct sockaddr *) &serv_addr, servlen) < 0)
+		perror("connect error");
+
+}
+
 void main () {
 
     initSimulation();
     initThreads();
+    initCommunication();
     // readConfig();
     calculateRunningTimeShop();
     // createClient(2);
