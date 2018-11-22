@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <netinet/in.h> 
+#include <semaphore.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -33,6 +34,10 @@ char       hmsTimeStamp[80];
 
 	int sockfd, newsockfd, clilen, childpid, servlen;
 	struct sockaddr_un cli_addr, serv_addr;
+
+// Semáforos
+
+sem_t semLine, semPA, semPB, semPC;
 
 // Estruturas de dados
 
