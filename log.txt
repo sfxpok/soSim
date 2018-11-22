@@ -1,4 +1,0 @@
-20:14:27 O cliente 3 acabou de chegar.
-20:14:27 O empregado 4 chegou à loja.
-20:14:27 A loja está aberta durante 120 minutos.
-20:14:27 O cliente 2 pediu pela poncha B.

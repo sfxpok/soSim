@@ -42,6 +42,8 @@ void closeFile(FILE* fileToClose) {
 
 void readConfig() {
 
+    // Adiciona uma excepção qualquer para valores disparatados no parâmetros
+
     FILE * fileConfig = fopen("config.conf", "r");
 
     char param[128];
@@ -269,44 +271,86 @@ void initThreads() {
 
 }
 
+int connectSocket() {
+
+    struct sockaddr_in address; 
+    // int sock = 0, valread; 
+    struct sockaddr_in serv_addr; 
+    char *hello = "Hello from client"; 
+    char buffer[1024] = {0}; 
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+    { 
+        printf("\n Socket creation error \n"); 
+        return -1; 
+    } 
+   
+    memset(&serv_addr, '0', sizeof(serv_addr)); 
+   
+    serv_addr.sin_family = AF_INET; 
+    serv_addr.sin_port = htons(PORT); 
+       
+    // Convert IPv4 and IPv6 addresses from text to binary form 
+    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)  
+    { 
+        printf("\nInvalid address/ Address not supported \n"); 
+        return -1; 
+    } 
+   
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    { 
+        printf("\nConnection Failed \n"); 
+        return -1; 
+    } 
+/*     send(sock , hello , strlen(hello) , 0 ); 
+    printf("Hello message sent\n"); 
+    valread = read( sock , buffer, 1024); 
+    printf("%s\n",buffer ); 
+    return 0;  */
+}
+
+pthread_mutex_t msg;
+
+void sendMessages() {
+    
+    pthread_mutex_lock(&msg);
+
+    // EDITA ISTO
+
+    if ((send(sockfd, messageToLog, strlen(messageToLog), 0)) < 0)
+    {
+        printf("Failed to send...\n");
+        //Retry sending
+        //send(sock, str, TAMANHO_MSG, 0);
+    } else {
+        send(sockfd, messageToLog, strlen(messageToLog), 0);
+    }
+
+    pthread_mutex_unlock(&msg);
+
+}
+
 void initCommunication() {
 
-    /* Cria socket stream */
+}
 
-	if ((sockfd = socket(AF_UNIX,SOCK_STREAM,0)) < 0)
-		perror("server: can't open stream socket");
-
-	/* Primeiro uma limpeza preventiva!
-	   Dados para o socket stream: tipo + nome do ficheiro.
-         O ficheiro serve para que os clientes possam identificar o servidor */
-
-	// bzero((char *)&serv_addr, sizeof(serv_addr));
-	serv_addr.sun_family = AF_UNIX;
-	strcpy(serv_addr.sun_path, UNIXSTR_PATH);
-
-      /* O servidor  quem cria o ficheiro que identifica o socket.
-         Elimina o ficheiro, para o caso de algo ter ficado pendurado.
-         Em seguida associa o socket ao ficheiro. 
-         A dimenso a indicar ao bind no  a da estrutura, pois depende
-         do nome do ficheiro */
-
-	servlen = strlen(serv_addr.sun_path) + sizeof(serv_addr.sun_family);
-    if(connect(sockfd, (struct sockaddr *) &serv_addr, servlen) < 0)
-		perror("connect error");
-
+void closeSocket() {
+    close(sockfd);
+    exit(0);
 }
 
 void main () {
 
     initSimulation();
-    initThreads();
-    initCommunication();
-    // readConfig();
-    calculateRunningTimeShop();
-    // createClient(2);
-    // createEmployee(1);
-    askForPoncha(2, 'B');
+    connectSocket();
+    //initThreads();
+    //initCommunication();
+    //readConfig();
+    //calculateRunningTimeShop();
+    createClient(2);
+    //createEmployee(1);
+    //askForPoncha(2, 'B');
 
     closeFile(logFile);
+    closeSocket();
 
 }

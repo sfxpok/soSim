@@ -7,6 +7,7 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <netinet/in.h> 
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -16,6 +17,7 @@
 #define UNIXSTR_PATH "/tmp/a2042416"
 #define UNIXDG_PATH  "/tmp/s.unixdfddffdfdgx"
 #define UNIXDG_TMP   "/tmp/dgXXXXXfdjhfdjhfdXX"
+#define PORT 8080 
 
 // Variáveis
 
