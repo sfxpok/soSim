@@ -19,9 +19,9 @@ void cleanLogFile() {
 }
 
 void writeLogFiles(char* writeToLog) {
-    
+
     // openLogFile();
-    
+
     char *timeStamp = getTimeStamp();
     fprintf(logFile, "%s %s", timeStamp, writeToLog);
 
@@ -94,7 +94,7 @@ void readConfig() {
 }
 
 void writeOutputToMonitor(char* writeToMonitor) {
-    
+
     printf("%s", writeToMonitor);
 
 }
@@ -109,7 +109,7 @@ void createClient(int idClient) {
 }
 
 void createEmployee(int idEmployee) {
-    
+
     // printf("O empregado %d chegou à loja.", idEmployee);
     snprintf(messageToLog, sizeof(messageToLog), "O empregado %d chegou à loja.\n", idEmployee);
     writeOutputToMonitor(messageToLog);
@@ -118,13 +118,13 @@ void createEmployee(int idEmployee) {
 }
 
 void calculateRunningTimeShop() {
-    
+
     estatistica.durationOpen = (simulador.closingTime - simulador.openingTime) * 60;
 
     snprintf(messageToLog, sizeof(messageToLog), "A loja está aberta durante %d minutos.\n", estatistica.durationOpen);
     writeOutputToMonitor(messageToLog);
     writeLogFiles(messageToLog);
-    
+
 }
 
 void giveUpClient(int idClient) {
@@ -253,19 +253,19 @@ void initThreads() {
 
     pthread_t tMessages;
     // pthread_create(&tMessages, NULL, &messages, NULL);
-
-    // é preciso mais 3 threads: mensagens (entre sim e mon), 
-    // gerente e repositor
+    // pthread_join(tMessages, NULL);
 
     pthread_t tClient;
     pthread_create(&tClient, NULL, &THREADCreateClient, NULL);
-
     pthread_join(tClient, NULL);
 
     pthread_t tEmployee;
     pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
-
     pthread_join(tEmployee, NULL);
+
+    pthread_t tFileManage;
+    // pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
+    // pthread_join(tFileManage, NULL);
 
     // printf("dd\n");
 
@@ -273,45 +273,46 @@ void initThreads() {
 
 int connectSocket() {
 
-    struct sockaddr_in address; 
-    // int sock = 0, valread; 
-    struct sockaddr_in serv_addr; 
-    char *hello = "Hello from client"; 
-    char buffer[1024] = {0}; 
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
-    { 
-        printf("\n Socket creation error \n"); 
-        return -1; 
-    } 
-   
-    memset(&serv_addr, '0', sizeof(serv_addr)); 
-   
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
-       
-    // Convert IPv4 and IPv6 addresses from text to binary form 
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)  
-    { 
-        printf("\nInvalid address/ Address not supported \n"); 
-        return -1; 
-    } 
-   
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
-    { 
-        printf("\nConnection Failed \n"); 
-        return -1; 
-    } 
-/*     send(sock , hello , strlen(hello) , 0 ); 
-    printf("Hello message sent\n"); 
-    valread = read( sock , buffer, 1024); 
-    printf("%s\n",buffer ); 
-    return 0;  */
+    struct sockaddr_in address;
+    //int sock = 0, valread;
+    int valread;
+    struct sockaddr_in serv_addr;
+    char *hello = "Hello from client";
+    char buffer[1024] = {0};
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        printf("\n Socket creation error \n");
+        return -1;
+    }
+
+    memset(&serv_addr, '0', sizeof(serv_addr));
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+
+    // Convert IPv4 and IPv6 addresses from text to binary form
+    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
+    {
+        printf("\nInvalid address/ Address not supported \n");
+        return -1;
+    }
+
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        printf("\nConnection Failed \n");
+        return -1;
+    }
+    send(sockfd, messageToLog, strlen(messageToLog) , 0 );
+    printf("Hello message sent\n");
+    valread = read( sockfd , buffer, 1024);
+    printf("%s\n",buffer );
+    return 0;
 }
 
 pthread_mutex_t msg;
 
 void sendMessages() {
-    
+
     pthread_mutex_lock(&msg);
 
     // EDITA ISTO
@@ -333,24 +334,87 @@ void initCommunication() {
 
 }
 
-void closeSocket() {
+/* void closeSocket() {
     close(sockfd);
     exit(0);
+} */
+
+void semaphores() {
+    //
+}
+
+/*
+
+Criação da ligação entre o monitor (servidor) e o simulador (cliente).
+
+*/
+
+int network_socket;
+
+int TESTstartSocket(FILE* logFile) {
+
+     // create a socket
+    
+    network_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+    if(network_socket == -1) {
+        printf("Não foi possível criar a socket.\n");
+        return -1;
+    }
+
+    printf("Socket foi criada.\n");
+
+    // specify an address for the socket
+    struct sockaddr_in server_address;
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(PORT);
+    server_address.sin_addr.s_addr = INADDR_ANY;
+
+    int connection_status = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
+
+    // check for error with the connection
+    if (connection_status == -1) {
+        printf("Conexão falhada.\n");
+        return -1;
+    }
+
+    printf("Conexão feita.\n");
+    
+    // recieve data from the server
+    //char server_response[256];
+    //recv(network_socket, &server_response, sizeof(server_response), 0);
+
+    // print out the server's response
+    //printf("The server sent the data: %s\n", server_response);
+
+    // and then close the socket
+    // close(network_socket);
+
+    return network_socket;
+
+}
+
+void closeSocket() {
+    close(network_socket);
 }
 
 void main () {
 
+    // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
+
     initSimulation();
-    connectSocket();
+    TESTstartSocket();
+    //semaphores();
     //initThreads();
     //initCommunication();
     //readConfig();
     //calculateRunningTimeShop();
-    createClient(2);
+    //createClient(2);
+    //sendMessages();
     //createEmployee(1);
     //askForPoncha(2, 'B');
 
-    closeFile(logFile);
+    //closeFile(logFile);
     closeSocket();
 
 }
