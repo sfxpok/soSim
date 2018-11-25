@@ -8,6 +8,8 @@ int addrlen = sizeof(address);
 char buffer[1024] = {0}; 
 char *hello = "Hello from server"; 
 
+int server_socket;
+
 void displayHeader() {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                            Loja                             │\n");
@@ -52,6 +54,10 @@ void initThreads() {
 
 }
 
+void closeSocket() {
+    close(server_socket);
+}
+
 void askForInput() {
 
     char op;
@@ -91,7 +97,7 @@ void askForInput() {
 
 }
 
-void startServer() {
+int startServer() {
 
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -152,8 +158,6 @@ void sendMessageInSocket() {
     printf("Hello message sent\n"); 
 }
 
-int server_socket;
-
 /*
 
 Criação do socket entre o monitor (servidor) e o simulador (cliente).
@@ -175,7 +179,7 @@ int TESTstartSocket() {
 
     // bind the socket to our specified IP and port
     if (bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address)) < 0) {
-        printToScreen(logFile, "Erro no bind.\n");
+        //printToScreen(logFile, "Erro no bind.\n");
         return -1;
     }
 
@@ -204,17 +208,13 @@ int TESTstartSocket() {
 
 }
 
-void closeSocket() {
-    close(server_socket);
-}
-
 void main() {
     //startServer();
     //displayHeader();
     //displayMenu();
 
-    TESTstartSocket();
-    askForInput();
+    //TESTstartSocket();
+    //askForInput();
 
     // initThreads();
     // stopServer();

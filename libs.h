@@ -94,7 +94,7 @@ struct stats estatistica;
 
 pthread_mutex_t mutexPrintToScreen;
 
-void print_message(FILE * file, char * str)
+/* void print_message(FILE * file, char * str)
 {
   pthread_mutex_lock(&prt_msg);
 
@@ -113,17 +113,4 @@ void prt_file_screen(FILE * file, char * str)
 
   puts(cat);
   fprintf(file,"%s\n",cat);
-}
-
-void printToScreen(FILE *logFile, char *string) {
-
-    pthread_mutex_lock(&mutexPrintToScreen);
-
-    // snprintf(messageToLog, sizeof(messageToLog), "%s", string);
-    fprintf(logFile, "%s", string);
-    writeOutputToMonitor(string);
-    writeLogFiles(string);
-
-    pthread_mutex_unlock(&mutexPrintToScreen);
-
-}
+} */
