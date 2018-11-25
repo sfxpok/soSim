@@ -188,6 +188,10 @@ int TESTstartSocket() {
     // Listen
     listen(server_socket, 1);
 
+    printf("Listen feito.\n");
+
+    printf("À espera do simulador...\n");
+
     int lengthStruct = sizeof(struct sockaddr_in);
     int client_socket = accept(server_socket, (struct sockaddr *) &client, (socklen_t*) &lengthStruct);
 
@@ -213,9 +217,9 @@ void main() {
     //displayHeader();
     //displayMenu();
 
-    //TESTstartSocket();
+    TESTstartSocket();
     //askForInput();
 
     // initThreads();
-    // stopServer();
+    //stopServer();
 }

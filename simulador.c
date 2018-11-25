@@ -264,6 +264,7 @@ void initThreads() {
 } */
 
 pthread_mutex_t msg;
+int network_socket;
 
 void sendMessages() {
 
@@ -271,13 +272,14 @@ void sendMessages() {
 
     // EDITA ISTO
 
-    if ((send(sockfd, messageToLog, strlen(messageToLog), 0)) < 0)
+    if ((send(network_socket, messageToLog, strlen(messageToLog), 0)) < 0)
     {
         printf("Failed to send...\n");
         //Retry sending
         //send(sock, str, TAMANHO_MSG, 0);
     } else {
-        send(sockfd, messageToLog, strlen(messageToLog), 0);
+        send(network_socket, messageToLog, strlen(messageToLog), 0);
+        printf("Envio feito.\n");
     }
 
     pthread_mutex_unlock(&msg);
@@ -297,15 +299,23 @@ void semaphores() {
     //
 }
 
+void * newClient() {
+    pthread_t threadClient = pthread_self();
+
+    sprintf(messageToLog, "O cliente (thread) %lu chegou.\n", threadClient);
+    printToScreen(messageToLog);
+
+    clientsInStore++;
+
+}
+
 /*
 
 Criação da ligação entre o monitor (servidor) e o simulador (cliente).
 
 */
 
-int network_socket;
-
-int TESTstartSocket(FILE* logFile) {
+int TESTstartSocket() {
 
      // create a socket
     
@@ -352,74 +362,14 @@ void closeSocket() {
     close(network_socket);
 }
 
-char* getTimeStamp() {
-
-    // Get current time
-    time(&UNIXts);
-
-    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
-    ts = *localtime(&UNIXts);
-    strftime(hmsTimeStamp, sizeof(hmsTimeStamp), "%H:%M:%S", &ts);
-    return hmsTimeStamp;
-}
-
-void cleanLogFile() {
-
-    FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
-    fclose(logFile);
-
-}
-
-void writeLogFiles(char* writeToLog) {
-
-    // openLogFile();
-
-    char *timeStamp = getTimeStamp();
-    fprintf(logFile, "%s %s", timeStamp, writeToLog);
-
-    // closeFile(logFile);
-}
-
-void openLogFile() {
-
-    logFile = fopen("log.txt", "a");
-
-}
-
-void closeFile(FILE* fileToClose) {
-
-    fclose(fileToClose);
-
-}
-
-void writeOutputToMonitor(char* writeToMonitor) {
-
-    printf("%s", writeToMonitor);
-
-}
-
-void printToScreen(FILE *logFile, char *string) {
-
-    pthread_mutex_lock(&mutexPrintToScreen);
-
-    // snprintf(messageToLog, sizeof(messageToLog), "%s", string);
-    // fprintf(logFile, "%s", string);
-    writeOutputToMonitor(string);
-    writeLogFiles(string);
-
-    pthread_mutex_unlock(&mutexPrintToScreen);
-
-}
-
 //char buf[1000] = {0};
 
 void DEBUGcreateClient(int idClient) {
 
     // printf("O cliente %d acabou de chegar.\n", idClient);
     //snprintf(buf, 999, "O cliente %d acabou de chegar.\n", idClient);
-    snprintf(writeToLog, sizeof(writeToLog), "O cliente %d acabou de chegar.\n", idClient);
-    //writeToLog = "d";
-    printToScreen(logFile, writeToLog);
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
+    printToScreen(logFile, messageToLog);
     //snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
     // writeOutputToMonitor(messageToLog);
     // writeLogFiles(messageToLog);
@@ -432,14 +382,14 @@ void main () {
 
     initSimulation();
     DEBUGcreateClient(3);
-    //TESTstartSocket();
+    TESTstartSocket();
     //semaphores();
     //initThreads();
     //initCommunication();
     //readConfig();
     //calculateRunningTimeShop();
     //createClient(2);
-    //sendMessages();
+    sendMessages();
     //createEmployee(1);
     //askForPoncha(2, 'B');
 

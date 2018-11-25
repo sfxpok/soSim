@@ -32,6 +32,8 @@ time_t     UNIXts;
 struct tm  ts;
 char       hmsTimeStamp[80];
 
+int clientsInStore;
+
 // Variáveis - SOCKETS
 
 	int sockfd, newsockfd, clilen, childpid, servlen;
@@ -114,3 +116,78 @@ void prt_file_screen(FILE * file, char * str)
   puts(cat);
   fprintf(file,"%s\n",cat);
 } */
+
+char* getTimeStamp() {
+
+    // Get current time
+    time(&UNIXts);
+
+    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
+    ts = *localtime(&UNIXts);
+    strftime(hmsTimeStamp, sizeof(hmsTimeStamp), "%H:%M:%S", &ts);
+    return hmsTimeStamp;
+}
+
+void cleanLogFile() {
+
+    FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
+    fclose(logFile);
+
+}
+
+void writeLogFiles(char* writeToLog) {
+
+    // openLogFile();
+
+    char *timeStamp = getTimeStamp();
+    fprintf(logFile, "%s %s", timeStamp, writeToLog);
+
+    // closeFile(logFile);
+}
+
+void openLogFile() {
+
+    logFile = fopen("log.txt", "a");
+
+}
+
+void closeFile(FILE* fileToClose) {
+
+    fclose(fileToClose);
+
+}
+
+void writeOutputToMonitor(char* writeToMonitor) {
+
+    printf("%s", writeToMonitor);
+
+}
+
+void printToScreen(FILE *logFile, char *string) {
+
+    pthread_mutex_lock(&mutexPrintToScreen);
+
+    printf("LOCKED\n");
+
+    // snprintf(messageToLog, sizeof(messageToLog), "%s", string);
+    // fprintf(logFile, "%s", string);
+    writeOutputToMonitor(string);
+    writeLogFiles(string);
+
+    pthread_mutex_unlock(&mutexPrintToScreen);
+
+    printf("UNLOCKED\n");
+
+}
+
+int getRandomNumber(int maxNumber) {
+
+    srand(time(NULL));
+
+    int randomNumber;
+
+    randomNumber = rand();
+
+    return randomNumber;
+
+}
