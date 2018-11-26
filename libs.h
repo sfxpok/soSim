@@ -34,7 +34,7 @@ time_t     UNIXts;
 struct tm  ts;
 char       hmsTimeStamp[80];
 
-int clientsInStore;
+int network_socket;
 
 // Variáveis - SOCKETS
 

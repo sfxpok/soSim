@@ -207,7 +207,7 @@ void *THREADCreateEmployee(void *tid) {
 
 void initThreads() {
 
-    pthread_t tMessages;
+    // pthread_t tMessages;
     // pthread_create(&tMessages, NULL, &messages, NULL);
     // pthread_join(tMessages, NULL);
 
@@ -266,7 +266,6 @@ void initThreads() {
 } */
 
 pthread_mutex_t msg;
-int network_socket;
 
 void sendMessages(int idEvent) {
 
@@ -304,16 +303,22 @@ void semaphores() {
 }
 
 int giveUp;
+int waitInLine;
 bool leaveStore = false;
+int clientsInLine;
+time_t arrivalTime;
 
-void * newClient() {
+void * lifeOfClient() {
 
     pthread_t threadClient = pthread_self();
 
     sprintf(messageToLog, "O cliente (thread) %lu chegou.\n", threadClient);
     printToScreen(logFile, messageToLog);
 
-    clientsInStore++;
+    clientsInLine++;
+    arrivalTime = time(NULL);
+
+    waitInLine = getRandomNumber(10);
     sem_wait(&semLoja);
 
     while(!leaveStore) {
@@ -325,9 +330,11 @@ void * newClient() {
             //clientsInStore--;
         }
 
+        waitInLine--;
+
     }
 
-    clientsInStore--;
+    clientsInLine--;
     sem_post(&semLoja);
 
     sprintf(messageToLog, "O cliente (thread) %lu vai sair da loja.", threadClient);
@@ -390,6 +397,35 @@ void closeSocket() {
     close(network_socket);
 }
 
+int server_socket;
+
+void *sendingMessages() {
+
+    int n;
+	char buffer[256];
+
+    while (1) {
+        if((n=recv(server_socket, buffer, sizeof(buffer), 0)) > 0) {
+            
+        }
+    }
+}
+
+void threadMessage() {
+
+    pthread_t tMessages;
+    pthread_create(&tMessages, NULL, &recMSG, NULL);
+
+
+}
+
+void simpleMessages() {
+
+    sprintf(messageToLog, "clientIsHere %s", getTimeStamp());
+	send(network_socket, messageToLog, sizeof(messageToLog), 0);
+
+}
+
 //char buf[1000] = {0};
 
 void DEBUGcreateClient(int idClient) {
@@ -417,6 +453,7 @@ void main () {
     // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
+    simpleMessages();
     //DEBUGcreateClient(3);
     //TESTstartSocket();
     //semaphores();

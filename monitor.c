@@ -45,15 +45,6 @@ void closeShop() {
     printf("A loja foi fechada.\n");
 }
 
-void initThreads() {
-
-    pthread_t tMessages;
-    // pthread_create(tMessages, NULL, NULL, NULL);
-
-    printf("PID do monitor: %d\n", getpid());
-
-}
-
 void closeSocket() {
     close(server_socket);
 }
@@ -164,6 +155,8 @@ Criação do socket entre o monitor (servidor) e o simulador (cliente).
 
 */
 
+int client_socket;
+
 int TESTstartSocket() {
 
     char server_message[256] = "You have reached the server!"; // messageToLog
@@ -193,7 +186,7 @@ int TESTstartSocket() {
     printf("À espera do simulador...\n");
 
     int lengthStruct = sizeof(struct sockaddr_in);
-    int client_socket = accept(server_socket, (struct sockaddr *) &client, (socklen_t*) &lengthStruct);
+    client_socket = accept(server_socket, (struct sockaddr *) &client, (socklen_t*) &lengthStruct);
 
     if (client_socket < 0) {
         printf("Conexão falhada.\n");
@@ -212,6 +205,21 @@ int TESTstartSocket() {
 
 }
 
+void *recMSG(char* message) {
+    while(1) {
+        recv(network_socket, message, strlen(message), 0);
+    }
+}
+
+void initThreads() {
+
+    pthread_t tMessages;
+    pthread_create(&tMessages, NULL, &recMSG, &client_socket);
+
+    printf("PID do monitor: %d\n", getpid());
+
+}
+
 void main() {
     //startServer();
     //displayHeader();
@@ -220,6 +228,6 @@ void main() {
     TESTstartSocket();
     //askForInput();
 
-    // initThreads();
+    initThreads();
     //stopServer();
 }
