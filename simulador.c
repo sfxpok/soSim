@@ -3,6 +3,8 @@
 void readConfig() {
 
     // Adiciona uma excepção qualquer para valores disparatados no parâmetros
+    // Como é que verifico se o ficheiro de configuração não está direito?
+    // Talvez deixa o utilizador definir parâmetros caso não haja ficheiro de configuração?
 
     FILE * fileConfig = fopen("config.conf", "r");
 
@@ -266,7 +268,9 @@ void initThreads() {
 pthread_mutex_t msg;
 int network_socket;
 
-void sendMessages() {
+void sendMessages(int idEvent) {
+
+    sprintf(messageToLog, "%d", idEvent);
 
     pthread_mutex_lock(&msg);
 
@@ -299,13 +303,37 @@ void semaphores() {
     //
 }
 
+int giveUp;
+bool leaveStore = false;
+
 void * newClient() {
+
     pthread_t threadClient = pthread_self();
 
     sprintf(messageToLog, "O cliente (thread) %lu chegou.\n", threadClient);
-    printToScreen(messageToLog);
+    printToScreen(logFile, messageToLog);
 
     clientsInStore++;
+    sem_wait(&semLoja);
+
+    while(!leaveStore) {
+
+        giveUp = getRandomNumber(100);
+
+        if (giveUp < 50) {
+            leaveStore = true;
+            //clientsInStore--;
+        }
+
+    }
+
+    clientsInStore--;
+    sem_post(&semLoja);
+
+    sprintf(messageToLog, "O cliente (thread) %lu vai sair da loja.", threadClient);
+    printToScreen(logFile, messageToLog);
+
+    return NULL;
 
 }
 
@@ -376,24 +404,35 @@ void DEBUGcreateClient(int idClient) {
 
 }
 
+int randomNumberLoop() {
+
+    while(1) {
+        getRandomNumber(25);
+    }
+
+}
+
 void main () {
 
     // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
-    DEBUGcreateClient(3);
-    TESTstartSocket();
+    //DEBUGcreateClient(3);
+    //TESTstartSocket();
     //semaphores();
     //initThreads();
     //initCommunication();
     //readConfig();
     //calculateRunningTimeShop();
     //createClient(2);
-    sendMessages();
+    //sendMessages();
+    //newClient();
     //createEmployee(1);
     //askForPoncha(2, 'B');
 
     //closeFile(logFile);
     //closeSocket();
+
+    //randomNumberLoop();
 
 }

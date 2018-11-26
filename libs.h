@@ -15,6 +15,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <stdbool.h>
+
 // Macros
 
 #define UNIXSTR_PATH "/tmp/a2042416"
@@ -36,12 +38,13 @@ int clientsInStore;
 
 // Variáveis - SOCKETS
 
-	int sockfd, newsockfd, clilen, childpid, servlen;
-	struct sockaddr_un cli_addr, serv_addr;
+int sockfd, newsockfd, clilen, childpid, servlen;
+struct sockaddr_un cli_addr, serv_addr;
 
 // Semáforos
 
 sem_t semLine, semPA, semPB, semPC;
+sem_t semLoja;
 
 // Estruturas de dados
 
@@ -186,7 +189,11 @@ int getRandomNumber(int maxNumber) {
 
     int randomNumber;
 
-    randomNumber = rand();
+    randomNumber = rand() % maxNumber+1;
+
+    printf("%d\n", randomNumber);
+
+    sleep(1);
 
     return randomNumber;
 
