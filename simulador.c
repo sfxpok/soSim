@@ -227,44 +227,6 @@ void initThreads() {
 
 }
 
-/* int connectSocket() {
-
-    struct sockaddr_in address;
-    //int sock = 0, valread;
-    int valread;
-    struct sockaddr_in serv_addr;
-    char *hello = "Hello from client";
-    char buffer[1024] = {0};
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        printf("\n Socket creation error \n");
-        return -1;
-    }
-
-    memset(&serv_addr, '0', sizeof(serv_addr));
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-    // Convert IPv4 and IPv6 addresses from text to binary form
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
-    {
-        printf("\nInvalid address/ Address not supported \n");
-        return -1;
-    }
-
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed \n");
-        return -1;
-    }
-    send(sockfd, messageToLog, strlen(messageToLog) , 0 );
-    printf("Hello message sent\n");
-    valread = read( sockfd , buffer, 1024);
-    printf("%s\n",buffer );
-    return 0;
-} */
-
 pthread_mutex_t msg;
 
 void sendMessages(int idEvent) {
@@ -275,13 +237,13 @@ void sendMessages(int idEvent) {
 
     // EDITA ISTO
 
-    if ((send(network_socket, messageToLog, strlen(messageToLog), 0)) < 0)
+    if ((send(simSocket, messageToLog, strlen(messageToLog), 0)) < 0)
     {
         printf("Failed to send...\n");
         //Retry sending
         //send(sock, str, TAMANHO_MSG, 0);
     } else {
-        send(network_socket, messageToLog, strlen(messageToLog), 0);
+        send(simSocket, messageToLog, strlen(messageToLog), 0);
         printf("Envio feito.\n");
     }
 
@@ -305,7 +267,6 @@ void semaphores() {
 int giveUp;
 int waitInLine;
 bool leaveStore = false;
-int clientsInLine;
 time_t arrivalTime;
 
 void * lifeOfClient() {
@@ -354,9 +315,9 @@ int TESTstartSocket() {
 
      // create a socket
     
-    network_socket = socket(AF_INET, SOCK_STREAM, 0);
+    simSocket = socket(AF_INET, SOCK_STREAM, 0);
 
-    if(network_socket == -1) {
+    if(simSocket == -1) {
         printf("Não foi possível criar a socket.\n");
         return -1;
     }
@@ -364,15 +325,15 @@ int TESTstartSocket() {
     printf("Socket foi criada.\n");
 
     // specify an address for the socket
-    struct sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(PORT);
-    server_address.sin_addr.s_addr = INADDR_ANY;
+    //struct sockaddr_in simSocketAddress;
+    simSocketAddress.sin_family = AF_INET;
+    simSocketAddress.sin_port = htons(PORT);
+    simSocketAddress.sin_addr.s_addr = INADDR_ANY;
 
-    int connection_status = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
+    int simSocketConnection = connect(simSocket, (struct sockaddr *) &simSocketAddress, sizeof(simSocketAddress));
 
     // check for error with the connection
-    if (connection_status == -1) {
+    if (simSocketConnection == -1) {
         printf("Conexão falhada.\n");
         return -1;
     }
@@ -381,20 +342,20 @@ int TESTstartSocket() {
     
     // recieve data from the server
     //char server_response[256];
-    //recv(network_socket, &server_response, sizeof(server_response), 0);
+    //recv(simSocket, &server_response, sizeof(server_response), 0);
 
     // print out the server's response
     //printf("The server sent the data: %s\n", server_response);
 
     // and then close the socket
-    // close(network_socket);
+    // close(simSocket);
 
-    return network_socket;
+    return simSocket;
 
 }
 
 void closeSocket() {
-    close(network_socket);
+    close(simSocket);
 }
 
 int server_socket;
@@ -411,6 +372,60 @@ void *sendingMessages() {
     }
 }
 
+/*
+
+Recebe mensagens do simulador e envia pelo socket
+
+*/
+
+void *recMSG() {
+
+    int outputSuccessful;
+	char simBuffer[256];
+    int op;
+
+    while(1) {
+
+        if ((outputSuccessful = recv(simSocket, op, sizeof(op), 0)) > 0) {
+
+            simBuffer[outputSuccessful] = "\0";
+
+            switch(op) {
+
+                case 1:
+                    printf("\nSim init\n");
+                    isItOpen = 1;
+                    break;
+
+                case 2:
+                    printf("\nSim pause\n");
+                    isItOpen = 0;
+                    break;
+
+            }
+
+        }
+
+        else {
+
+            if (outputSuccessful < 0) {
+                printf("Erro no recv");
+            }
+            else {
+                printf("\nServidor não tem conexão.\n");
+            }
+
+            exit(1);
+
+        }
+
+    }
+
+    closeSocket();
+    return NULL;
+
+}
+
 void threadMessage() {
 
     pthread_t tMessages;
@@ -419,10 +434,106 @@ void threadMessage() {
 
 }
 
+/*
+
+Funcionamento do gestor de filas de clientes
+
+*/
+
+void *clientManager(void *tid) {
+    //
+}
+
+/*
+
+Funcionamento do empregado
+
+*/
+
+void *employee(void *tid) {
+    //
+}
+
+/*
+
+Funcionamento do cliente
+
+*/
+
+void *client(void *tid) {
+    //
+}
+
+void threadsShop() {
+
+    pthread_t tClientManager;
+    pthread_create(&tClientManager, NULL, &clientManager, NULL);
+
+    pthread_t tEmployee;
+    pthread_create(&tEmployee, NULL, employee, NULL);
+
+}
+
+void closeShop() {
+    printf("A loja está fechada, mas falta atender os clientes em fila.\n");
+
+    while(clientsInLine != 0) {
+        printf("Já não existem clientes.\n");
+    }
+
+    printf("Simulação term.\n");
+
+    isItOpen = 0;
+    close(simSocket);
+
+}
+
+void sleepingShop() {
+
+    while(time(NULL) < closingTime) {
+        while(!isItOpen) {
+
+            pthread_create(&tClient, NULL, client, NULL);
+            sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
+
+        }
+    }
+
+    closeShop();
+
+}
+
+void shopRuntime() {
+
+/*     while(isItOpen) {
+
+        openingTime = time(NULL);
+        closingTime = openingTime + timeCounter;
+
+        threadsShop();
+        sleepingShop();
+        closeShop();
+
+    } */
+
+    while(isItOpen) {
+        openingTime = time(NULL);
+    }
+
+        closingTime = openingTime + timeCounter;
+
+        threadsShop();
+        sleepingShop();
+        closeShop();
+
+    
+
+}
+
 void simpleMessages() {
 
     sprintf(messageToLog, "clientIsHere %s", getTimeStamp());
-	send(network_socket, messageToLog, sizeof(messageToLog), 0);
+	send(simSocket, messageToLog, sizeof(messageToLog), 0);
 
 }
 
@@ -453,7 +564,12 @@ void main () {
     // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
-    simpleMessages();
+    shopRuntime();
+    //simpleMessages();
+    //threadMessage();
+
+
+
     //DEBUGcreateClient(3);
     //TESTstartSocket();
     //semaphores();

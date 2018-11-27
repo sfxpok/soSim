@@ -34,17 +34,42 @@ time_t     UNIXts;
 struct tm  ts;
 char       hmsTimeStamp[80];
 
-int network_socket;
+int simSocket;
+int isItOpen;
+int openingTime;
+int closingTime;
+int timeCounter;
+int avgTimeArrivalClients;
+int createdClients;
+int clientsInLine;
+int avgTimeWaitingClientsInLine;
+int totalWithdrawls;
+int totalChangedOrder;
+int maxEmployeesUsed;
+int actualEmployeesUsedNow;
+int unitsSoldPonchaA;
+int unitsSoldPonchaB;
+int unitsSoldPonchaC;
+int avgTimeToServePonchaA;
+int avgTimeToServePonchaB;
+int avgTimeToServePonchaC;
 
 // Variáveis - SOCKETS
 
 int sockfd, newsockfd, clilen, childpid, servlen;
 struct sockaddr_un cli_addr, serv_addr;
 
+struct sockaddr_in simSocketAddress;
+int simSocketAddressLength = sizeof(struct sockaddr_in);
+
+int monSocketConnection;
+
 // Semáforos
 
 sem_t semLine, semPA, semPB, semPC;
 sem_t semLoja;
+
+pthread_t tClient;
 
 // Estruturas de dados
 
