@@ -1,4 +1,5 @@
 #include "libs.h"
+#include "unix.h"
 
 void readConfig() {
 
@@ -311,13 +312,14 @@ Criação da ligação entre o monitor (servidor) e o simulador (cliente).
 
 */
 
-int TESTstartSocket() {
+int simLength;
+int simSocketConnection;
+
+int startSimulatorSocket() {
 
      // create a socket
     
-    simSocket = socket(AF_INET, SOCK_STREAM, 0);
-
-    if(simSocket == -1) {
+    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
         printf("Não foi possível criar a socket.\n");
         return -1;
     }
@@ -326,14 +328,13 @@ int TESTstartSocket() {
 
     // specify an address for the socket
     //struct sockaddr_in simSocketAddress;
-    simSocketAddress.sin_family = AF_INET;
-    simSocketAddress.sin_port = htons(PORT);
-    simSocketAddress.sin_addr.s_addr = INADDR_ANY;
+    simSocketAddress.sun_family = AF_UNIX;
+    //simSocketAddress.sun_port = htons(PORT);
+    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
+    //simSocketAddress.sun_addr.s_addr = INADDR_ANY;
+    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
 
-    int simSocketConnection = connect(simSocket, (struct sockaddr *) &simSocketAddress, sizeof(simSocketAddress));
-
-    // check for error with the connection
-    if (simSocketConnection == -1) {
+    if (connect(simSocket, (struct sockaddr *) &simSocketAddress, simLength) < 0) {
         printf("Conexão falhada.\n");
         return -1;
     }
@@ -350,7 +351,7 @@ int TESTstartSocket() {
     // and then close the socket
     // close(simSocket);
 
-    return simSocket;
+    return 0;
 
 }
 
@@ -380,17 +381,22 @@ Recebe mensagens do simulador e envia pelo socket
 
 void *recMSG() {
 
-    int outputSuccessful;
-	char simBuffer[256];
-    int op;
+    printf("tou na thread das mensagens\n");
 
     while(1) {
 
-        if ((outputSuccessful = recv(simSocket, op, sizeof(op), 0)) > 0) {
+
+        printf("tou no loop\n");
+
+
+
+        if((outputSuccessful=recv(simSocket, opInt, sizeof(opInt), 0)) > 0) {
+
+            printf("tou dentro do recv\n");
 
             simBuffer[outputSuccessful] = "\0";
 
-            switch(op) {
+            switch(opInt) {
 
                 case 1:
                     printf("\nSim init\n");
@@ -426,10 +432,47 @@ void *recMSG() {
 
 }
 
+void *mensagens()
+{
+	int n;
+	char buffer[256];
+	//Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
+	while(1){
+		if((n=recv(simSocket, buffer, sizeof(buffer), 0)) > 0)
+		{
+			buffer[n]='\0';
+			if(!strcmp(buffer, "start\n"))
+			{
+				printf("\nSimulacao iniciada\n\n");
+				isItOpen = 1;
+				//pausa = 0;
+			}
+			if(!strcmp(buffer, "pause\n"))
+			{
+				printf("\nSimulacao parada\n\n");
+				//pausa = 1;
+				sprintf(buffer, "pause");
+				send(simSocket, buffer, sizeof(buffer), 0);
+			}
+       	}
+		else
+		{
+			if(n < 0) 
+				perror("recv");
+			else 
+				printf("\nServer closed connection\n");
+			exit(1);
+		}
+	}
+	close(simSocket);
+	return NULL;
+}
+
+
 void threadMessage() {
 
     pthread_t tMessages;
-    pthread_create(&tMessages, NULL, &recMSG, NULL);
+    pthread_create(&tMessages, NULL, &mensagens, NULL);
 
 
 }
@@ -499,7 +542,7 @@ void sleepingShop() {
         }
     }
 
-    closeShop();
+    //closeShop();
 
 }
 
@@ -564,7 +607,9 @@ void main () {
     // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
-    shopRuntime();
+    startSimulatorSocket();
+    threadMessage();
+    //shopRuntime();
     //simpleMessages();
     //threadMessage();
 

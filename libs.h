@@ -19,10 +19,10 @@
 
 // Macros
 
-#define UNIXSTR_PATH "/tmp/a2042416"
-#define UNIXDG_PATH  "/tmp/s.unixdfddffdfdgx"
-#define UNIXDG_TMP   "/tmp/dgXXXXXfdjhfdjhfdXX"
-#define PORT 8080 
+//#define UNIXSTR_PATH "/tmp/a2042416"
+//#define UNIXDG_PATH  "/tmp/s.unixdfddffdfdgx"
+//#define UNIXDG_TMP   "/tmp/dgXXXXXfdjhfdjhfdXX"
+//#define PORT 8080 
 
 // Variáveis
 
@@ -54,13 +54,27 @@ int avgTimeToServePonchaA;
 int avgTimeToServePonchaB;
 int avgTimeToServePonchaC;
 
+char op;
+
+int outputSuccessful;
+char simBuffer[256];
+int opInt;
+
+int client_socket;
+struct sockaddr_un monSocketAddress;
+// struct sockaddr_un client;
+// int serverLength = sizeof(struct sockaddr_un);
+int monLength;
+int monSocket;
+int simSocketAddressLength;
+
 // Variáveis - SOCKETS
 
 int sockfd, newsockfd, clilen, childpid, servlen;
 struct sockaddr_un cli_addr, serv_addr;
 
-struct sockaddr_in simSocketAddress;
-int simSocketAddressLength = sizeof(struct sockaddr_in);
+struct sockaddr_un simSocketAddress;
+int simSocketAddressLength = sizeof(struct sockaddr_un);
 
 int monSocketConnection;
 

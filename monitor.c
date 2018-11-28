@@ -1,4 +1,5 @@
 #include "libs.h"
+#include "unix.h"
 
 /* int server_fd, new_socket, valread; 
 struct sockaddr_in address; 
@@ -7,7 +8,6 @@ int addrlen = sizeof(address);
 char buffer[1024] = {0}; 
 char *hello = "Hello from server"; 
  */
-int monSocket;
 
 void displayHeader() {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
@@ -23,6 +23,7 @@ void displayMenu() {
     printf("│        O comando é a primeira letra de cada operacao        │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
     printf("│(i)nit - inicializa a simulacao                              │\n");
+    printf("│(m)enu - mostra o menu                                       │\n");
     printf("│(h)alt - pausa a simulacao                                   │\n");
     printf("│(q)uit - sai da simulacao                                    │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
@@ -80,7 +81,6 @@ void closeSocket() {
 
 void askForInput() {
 
-    char op;
     int halt = 0;
 
     do {
@@ -91,7 +91,7 @@ void askForInput() {
         switch(op) {
 
             case 'i':
-                initThreads();
+                //initThreads();
                 break;
             
             case 'h':
@@ -99,6 +99,10 @@ void askForInput() {
 
             case 'q': // to be fixed
                 halt = 1;
+                break;
+
+            case 'm':
+                displayMenu();
                 break;
 
             case 's':
@@ -123,26 +127,28 @@ Criação do socket entre o monitor (servidor) e o simulador (cliente).
 
 */
 
-int client_socket;
-struct sockaddr_in monSocketAddress, client;
-int lengthStruct = sizeof(struct sockaddr_in);
-
-int TESTstartSocket() {
+int startMonitorSocket() {
 
     // char server_message[256] = "You have reached the server!"; // messageToLog
 
-    // create the server socket
-    monSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if ((monSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+        printf("Não deu para criar o socket dude.\n");
+    }
+
+    printf("Socket criado dude.\n");
 
     // define the server address
-    
-    monSocketAddress.sin_family = AF_INET;
-    monSocketAddress.sin_port = htons(PORT);
-    monSocketAddress.sin_addr.s_addr = INADDR_ANY;
+    bzero((char *)&monSocketAddress, sizeof(monSocketAddress));
+    monSocketAddress.sun_family = AF_UNIX;
+    strcpy(monSocketAddress.sun_path, UNIXSTR_PATH);
+    //monSocketAddress.sun_addr.s_addr = INADDR_ANY;
+    monLength = strlen(monSocketAddress.sun_path) + sizeof(monSocketAddress.sun_family);
+
+    unlink(UNIXSTR_PATH);
 
     // bind the socket to our specified IP and port
-    if (bind(monSocket, (struct sockaddr*) &monSocketAddress, sizeof(monSocketAddress)) < 0) {
-        //printToScreen(logFile, "Erro no bind.\n");
+    if (bind(monSocket, (struct sockaddr *) &monSocketAddress, monLength) < 0) {
+        printf("Bind não feito.\n");
         return -1;
     }
 
@@ -150,15 +156,14 @@ int TESTstartSocket() {
 
     // Listen
     listen(monSocket, 1);
-
     printf("Listen feito.\n");
-
     printf("À espera do simulador...\n");
 
-    monSocketConnection = accept(monSocket, (struct sockaddr *) &simSocketAddress, (socklen_t*) &simSocketAddressLength);
+    simSocketAddressLength = sizeof(simSocketAddress);
 
-    if (monSocketConnection < 0) {
-        printf("Conexão falhada.\n");
+    // mudar o ultimo arg
+    if ((monSocketConnection = accept(monSocket, (struct sockaddr *) &simSocketAddress, &simSocketAddressLength)) < 0) {
+        printf("Conexão falhada. ");
         return -1;
     }
 
@@ -170,7 +175,7 @@ int TESTstartSocket() {
     // close the socket
     // close(monSocket);
 
-    return monSocketConnection;
+    return 0;
 
 }
 
@@ -184,16 +189,43 @@ int outputMonitor;
 
 void *recMSG(void *tid) {
 
+    int monSocket = *((int *) tid);
+
     while(1) {
-        //
+        
+        int error = 0;
+
+        do {
+            if((outputSuccessful = recv(monSocket, opInt, sizeof(opInt), 0)) <= 0) {
+                if(outputSuccessful < 0) {
+                    //sleep(2);
+                    error = 1;
+                    printf("recv error");
+                }
+            }
+
+            //printf("sim\n");
+
+            switch(opInt) {
+                case 1:
+                    printf("deu alguma coisa\n");
+                    break;
+            }
+
+        }while(!error);
+
     }
 
 }
 
 void initThreads() {
 
+    //printf("prethread\n");
+
     pthread_t tMessages;
     pthread_create(&tMessages, NULL, &recMSG, &monSocketConnection);
+
+    //printf("posthread\n");
 
     //printf("PID do monitor: %d\n", getpid());
 
@@ -221,13 +253,14 @@ void main() {
     //startServer();
 
 
-    TESTstartSocket();
+    startMonitorSocket();
+    //printf("fiz socket\n");
     initThreads();
 
     displayHeader();
     displayMenu();
-
-    monitorRuntime();
+    
+    askForInput();
     closeShop();
     
     //sendUtilMsg();
