@@ -68,6 +68,8 @@ int monLength;
 int monSocket;
 int simSocketAddressLength;
 
+int halt;
+
 // Variáveis - SOCKETS
 
 int sockfd, newsockfd, clilen, childpid, servlen;

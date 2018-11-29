@@ -355,6 +355,22 @@ int startSimulatorSocket() {
 
 }
 
+void altStartSimulatorSocket() {
+    //Criacao do socket UNIX e associacao ao Simulador
+    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+        perror("cant open socket stream");
+    simSocketAddress.sun_family = AF_UNIX;
+    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
+    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
+    unlink(UNIXSTR_PATH);
+    if (bind(simSocket, (struct sockaddr *)&simSocketAddress, simLength) < 0)
+        perror("cant bind local address");
+    listen(simSocket, 1);
+
+    printf("alt socket criada\n");
+
+}
+
 void closeSocket() {
     close(simSocket);
 }
@@ -432,47 +448,52 @@ void *recMSG() {
 
 }
 
-void *mensagens()
+void *mensagens(void *tid)
 {
-	int n;
-	char buffer[256];
-	//Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
-	while(1){
-		if((n=recv(simSocket, buffer, sizeof(buffer), 0)) > 0)
-		{
-			buffer[n]='\0';
-			if(!strcmp(buffer, "start\n"))
-			{
-				printf("\nSimulacao iniciada\n\n");
-				isItOpen = 1;
-				//pausa = 0;
-			}
-			if(!strcmp(buffer, "pause\n"))
-			{
-				printf("\nSimulacao parada\n\n");
-				//pausa = 1;
-				sprintf(buffer, "pause");
-				send(simSocket, buffer, sizeof(buffer), 0);
-			}
-       	}
-		else
-		{
-			if(n < 0) 
-				perror("recv");
-			else 
-				printf("\nServer closed connection\n");
-			exit(1);
-		}
-	}
-	close(simSocket);
-	return NULL;
-}
+    int n;
+    char buffer[256];
+    //Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
+    while (1)
+    {
+        do
+        {
+            if ((n = recv(simSocket, buffer, sizeof(buffer), 0)) <= 0)
+            {
 
+                if (n < 0)
+                    perror("recv");
+                else
+                    printf("\nServer closed connection\n");
+                halt = 1;
+                exit(1);
+            }
+            else
+            {
+                buffer[n] = '\0';
+                if (!strcmp(buffer, "start\n"))
+                {
+                    printf("\nSimulacao iniciada\n\n");
+                    isItOpen = 1;
+                    //pausa = 0;
+                }
+                if (!strcmp(buffer, "pause\n"))
+                {
+                    printf("\nSimulacao parada\n\n");
+                    //pausa = 1;
+                    sprintf(buffer, "pause");
+                    send(simSocket, buffer, sizeof(buffer), 0);
+                }
+            }
+        } while (!halt);
+    }
+    close(simSocket);
+    return NULL;
+}
 
 void threadMessage() {
 
     pthread_t tMessages;
-    pthread_create(&tMessages, NULL, &mensagens, NULL);
+    pthread_create(&tMessages, NULL, &mensagens, &simSocket);
 
 
 }
@@ -607,8 +628,14 @@ void main () {
     // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
-    startSimulatorSocket();
-    threadMessage();
+
+    //startSimulatorSocket();
+    altStartSimulatorSocket();
+
+    pthread_t tMessages;
+    pthread_create(&tMessages, NULL, &mensagens, &simSocket);
+
+    //threadMessage();
     //shopRuntime();
     //simpleMessages();
     //threadMessage();

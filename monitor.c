@@ -161,7 +161,6 @@ int startMonitorSocket() {
 
     simSocketAddressLength = sizeof(simSocketAddress);
 
-    // mudar o ultimo arg
     if ((monSocketConnection = accept(monSocket, (struct sockaddr *) &simSocketAddress, &simSocketAddressLength)) < 0) {
         printf("Conexão falhada. ");
         return -1;
