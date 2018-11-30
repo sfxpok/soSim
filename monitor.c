@@ -1,13 +1,4 @@
 #include "libs.h"
-#include "unix.h"
-
-/* int server_fd, new_socket, valread; 
-struct sockaddr_in address; 
-int opt = 1; 
-int addrlen = sizeof(address); 
-char buffer[1024] = {0}; 
-char *hello = "Hello from server"; 
- */
 
 void displayHeader() {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
@@ -75,11 +66,9 @@ void pauseShop() {
     //
 }
 
-void closeSocket() {
-    close(monSocket);
-}
-
 void askForInput() {
+
+    printf("entrei no askforinput\n");
 
     int halt = 0;
 
@@ -117,7 +106,84 @@ void askForInput() {
 
     } while(halt != 1);
 
-    closeShop();
+    printf("sai do askforinput\n");
+
+    //closeShop();
+
+}
+
+void pastaAskForInput() {
+    do
+    {
+        printf("Escreve um comando: \n");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (!strcmp(buffer, "menu\n"))
+            displayMenu();
+        if (!strcmp(buffer, "estatistica\n"))
+        {
+            //mostra_estatistica();
+            printf("stat\n");
+        }
+
+        if (!strcmp(buffer, "start\n"))
+        {
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+
+                printf("send\n");
+                exit(1);
+            }
+            //tempo_inicio_simulacao = time(NULL);
+            printf("start?\n");
+        }
+        if (!strcmp(buffer, "pause\n"))
+        {
+            printf("Introduza o comando log para ver o registo da simulacao\n");
+            printf("Introduza o comando estatistica para ver as mesmas\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+        }
+
+        if (!strcmp(buffer, "abre\n")) {
+            printf("hey do monitor - abre\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+
+        }
+
+        if (!strcmp(buffer, "dummy\n"))
+        {
+            printf("dummy command\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+
+        }
+    } while (strcmp(buffer, "quit\n"));
+}
+
+/* void monitorRuntime() {
+
+    do {
+        //
+    } while(op != 'q');
+
+} */
+
+void closeShop() {
+    printf("A sim terminou\n");
+
+    displayStats();
+
+    closeSocket();
 
 }
 
@@ -127,7 +193,7 @@ Criação do socket entre o monitor (servidor) e o simulador (cliente).
 
 */
 
-int startMonitorSocket() {
+int startMonitorServerSocket() {
 
     // char server_message[256] = "You have reached the server!"; // messageToLog
 
@@ -178,6 +244,75 @@ int startMonitorSocket() {
 
 }
 
+/*
+
+Criação do socket entre o monitor (cliente) e o simulador (servidor).
+
+*/
+
+int monLength;
+
+int startMonitorClientSocket() {
+
+    // char server_message[256] = "You have reached the server!"; // messageToLog
+
+    if ((monSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+        printf("Não deu para criar o socket dude.\n");
+    }
+
+    printf("Socket criado dude.\n");
+
+    // define the server address
+    bzero((char *)&monSocketAddress, sizeof(monSocketAddress));
+    monSocketAddress.sun_family = AF_UNIX;
+    strcpy(monSocketAddress.sun_path, UNIXSTR_PATH);
+    //monSocketAddress.sun_addr.s_addr = INADDR_ANY;
+    monLength = strlen(monSocketAddress.sun_path) + sizeof(monSocketAddress.sun_family);
+
+    if (connect(monSocket, (struct sockaddr *) &monSocketAddress, monLength) < 0) {
+        printf("Conexão falhada.\n");
+        return -1;
+    }
+
+    printf("Conexão feita.\n");
+
+    // send the message
+    // send(monSocketConnection, server_message, sizeof(server_message), 0);
+
+    // close the socket
+    // close(monSocket);
+
+    printf("prestes a sair da criação do socket\n");
+
+    return 0;
+
+}
+
+void socketPleaseStart() {
+
+    if ((sockfd=socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+        printf("cant open socket stream\n");
+    }
+		
+	serverAddr.sun_family=AF_UNIX;
+	strcpy(serverAddr.sun_path, UNIXSTR_PATH);
+	lengthServer = strlen(serverAddr.sun_path) + sizeof(serverAddr.sun_family);
+
+	unlink(UNIXSTR_PATH);
+
+	if (bind(sockfd, (struct sockaddr *) &serverAddr, lengthServer) < 0) {
+        printf("cant bind local address\n");
+    }
+		
+	listen(sockfd, 1);
+	
+    int lengthClient = sizeof(clientAddr);
+
+	if ((newsockfd=accept(sockfd, (struct sockaddr *) &clientAddr, &lengthClient)) < 0) {
+        printf("accept error\n");
+    }
+}
+
 int outputMonitor;
 
 /* void *recMSG(char* message) {
@@ -186,16 +321,16 @@ int outputMonitor;
     }
 } */
 
-void *recMSG(void *tid) {
+void *recMSGServer(void *tid) {
 
-    int monSocket = *((int *) tid);
+    int sockfd = *((int *) tid);
 
     while(1) {
         
         int error = 0;
 
         do {
-            if((outputSuccessful = recv(monSocket, opInt, sizeof(opInt), 0)) <= 0) {
+            if((outputSuccessful = recv(sockfd, opInt, sizeof(opInt), 0)) <= 0) {
                 if(outputSuccessful < 0) {
                     //sleep(2);
                     error = 1;
@@ -217,49 +352,41 @@ void *recMSG(void *tid) {
 
 }
 
+void closeSocket() {
+    close(monSocketConnection);
+    close(monSocket);
+}
+
 void initThreads() {
 
-    //printf("prethread\n");
+    printf("prethread\n");
 
     pthread_t tMessages;
-    pthread_create(&tMessages, NULL, &recMSG, &monSocketConnection);
+    pthread_create(&tMessages, NULL, &recMSGServer, &newsockfd);
 
-    //printf("posthread\n");
+    printf("posthread\n");
 
     //printf("PID do monitor: %d\n", getpid());
 
 }
 
-void monitorRuntime() {
-
-    do {
-        //
-    } while(op != 'q');
-
-}
-
-void closeShop() {
-    printf("A sim terminou\n");
-
-    displayStats();
-
-    close(monSocketConnection);
-    close(monSocket);
-}
-
-
 void main() {
     //startServer();
 
 
-    startMonitorSocket();
+    //startMonitorSocket();
+    //startMonitorClientSocket();
+    socketPleaseStart();
+
     //printf("fiz socket\n");
     initThreads();
 
     displayHeader();
     displayMenu();
     
-    askForInput();
+    //askForInput();
+    pastaAskForInput();
+
     closeShop();
     
     //sendUtilMsg();

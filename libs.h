@@ -19,10 +19,9 @@
 
 // Macros
 
-//#define UNIXSTR_PATH "/tmp/a2042416"
-//#define UNIXDG_PATH  "/tmp/s.unixdfddffdfdgx"
-//#define UNIXDG_TMP   "/tmp/dgXXXXXfdjhfdjhfdXX"
-//#define PORT 8080 
+#define UNIXSTR_PATH "/tmp/str_r"
+#define UNIXDG_PATH  "/tmp/dgx_r"
+#define UNIXDG_TMP   "/tmp/dg_r"
 
 // Variáveis
 
@@ -60,6 +59,15 @@ int outputSuccessful;
 char simBuffer[256];
 int opInt;
 
+int halt;
+
+// Variáveis - SOCKETS
+
+struct sockaddr_un simSocketAddress;
+int simSocketAddressLength = sizeof(struct sockaddr_un);
+
+int monSocketConnection;
+
 int client_socket;
 struct sockaddr_un monSocketAddress;
 // struct sockaddr_un client;
@@ -68,17 +76,18 @@ int monLength;
 int monSocket;
 int simSocketAddressLength;
 
-int halt;
 
-// Variáveis - SOCKETS
+// Variáveis 2 - SOCKETS
 
-int sockfd, newsockfd, clilen, childpid, servlen;
-struct sockaddr_un cli_addr, serv_addr;
+struct sockaddr_un serverAddr;
+struct sockaddr_un clientAddr;
+int sockfd;
+int newsockfd;
+int lengthServer;
 
-struct sockaddr_un simSocketAddress;
-int simSocketAddressLength = sizeof(struct sockaddr_un);
+// pasta
 
-int monSocketConnection;
+char buffer[256];
 
 // Semáforos
 
@@ -177,6 +186,8 @@ void cleanLogFile() {
     FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
     fclose(logFile);
 
+    printf("limpei logfile\n");
+
 }
 
 void writeLogFiles(char* writeToLog) {
@@ -192,6 +203,8 @@ void writeLogFiles(char* writeToLog) {
 void openLogFile() {
 
     logFile = fopen("log.txt", "a");
+
+    printf("abri logfile\n");
 
 }
 
