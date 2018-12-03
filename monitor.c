@@ -135,6 +135,10 @@ void pastaAskForInput() {
             }
             //tempo_inicio_simulacao = time(NULL);
             printf("start?\n");
+
+            if (simPause) {
+                simPause = 0;
+            }
         }
         if (!strcmp(buffer, "pause\n"))
         {
@@ -145,6 +149,9 @@ void pastaAskForInput() {
             {
                 exit(1);
             }
+
+            simPause = 1;
+
         }
 
         if (!strcmp(buffer, "abre\n")) {
@@ -324,18 +331,21 @@ int outputMonitor;
 void *recMSGServer(void *tid) {
 
     int sockfd = *((int *) tid);
+    int error = 0;
 
     while(1) {
         
-        int error = 0;
+        error = 0;
 
         do {
-            if((outputSuccessful = recv(sockfd, opInt, sizeof(opInt), 0)) <= 0) {
+            if((outputSuccessful = recv(sockfd, buffer, sizeof(buffer), 0)) <= 0) {
+                
                 if(outputSuccessful < 0) {
-                    //sleep(2);
-                    error = 1;
                     printf("recv error");
                 }
+
+                error = 1;
+
             }
 
             //printf("sim\n");

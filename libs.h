@@ -61,6 +61,8 @@ int opInt;
 
 int halt;
 
+int simPause;
+
 // Variáveis - SOCKETS
 
 struct sockaddr_un simSocketAddress;

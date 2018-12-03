@@ -813,27 +813,26 @@ void main()
         sleep(1); // a espera que a simulação inicie pelo monitor
     }
 
-    // boot up simulation
+    // inicialização de variáveis devido ao começo da simulação
 
-    //shopRuntime();
-    //simpleMessages();
-    //threadMessage();
+    openingTime = time(0);
+    closingTime = openingTime + timeCounter;
 
-    //DEBUGcreateClient(3);
-    //TESTstartSocket();
-    //semaphores();
-    //initThreads();
-    //initCommunication();
-    //readConfig();
-    //calculateRunningTimeShop();
-    //createClient(2);
-    //sendMessages();
-    //newClient();
-    //createEmployee(1);
-    //askForPoncha(2, 'B');
+    threadsShop();
 
-    //closeFile(logFile);
-    //closeSocket();
+    pthread_t tClient;
 
-    //randomNumberLoop();
+    while(time(0) < closingTime) {
+
+        while(simPause) {
+            //
+        }
+
+        pthread_create(&tClient, NULL, client, NULL);
+        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
+
+    }
+
+    // fim de inicialização
+
 }
