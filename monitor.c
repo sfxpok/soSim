@@ -1,13 +1,15 @@
 #include "libs.h"
 
-void displayHeader() {
+void displayHeader()
+{
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                            Loja                             │\n");
     printf("│                Sistemas Operativos 2018/2019                │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
-void displayMenu() {
+void displayMenu()
+{
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                      Lista de operacoes                     │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
@@ -16,16 +18,18 @@ void displayMenu() {
     printf("│(i)nit - inicializa a simulacao                              │\n");
     printf("│(m)enu - mostra o menu                                       │\n");
     printf("│(h)alt - pausa a simulacao                                   │\n");
+    printf("│(s)tat - mostra as estatísticas da simulação                 │\n");
     printf("│(q)uit - sai da simulacao                                    │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
-void displayStats() {
+void displayStats()
+{
 
     // põe qualquer coisa aqui para escrever no ficheiro de log dude
 
     // cuidado que esta função está incompleta
-    
+
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                         Estatisticas                        │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
@@ -55,64 +59,67 @@ void displayStats() {
     printf("│Tempo médio de serviço do produto 2: %d                      │\n", avgTimeToServePonchaB);
     printf("│Tempo médio de serviço do produto 3: %d                      │\n", avgTimeToServePonchaC);
     printf("├─────────────────────────────────────────────────────────────┤\n");
-
 }
 
-void outputMenu() {
-
-}
-
-void pauseShop() {
+void outputMenu()
+{
     //
 }
 
-void askForInput() {
+void pauseShop()
+{
+    //
+}
+
+void askForInput()
+{
 
     printf("entrei no askforinput\n");
 
     int halt = 0;
 
-    do {
+    do
+    {
 
         printf("Escreva um comando:\n");
         scanf("%c", &op);
 
-        switch(op) {
+        switch (op)
+        {
 
-            case 'i':
-                //initThreads();
-                break;
-            
-            case 'h':
-                break;
+        case 'i':
+            //initThreads();
+            break;
 
-            case 'q': // to be fixed
-                halt = 1;
-                break;
+        case 'h':
+            break;
 
-            case 'm':
-                displayMenu();
-                break;
+        case 'q': // to be fixed
+            halt = 1;
+            break;
 
-            case 's':
-                closeSocket();
-                halt = 1;
-                break;
-            
+        case 'm':
+            displayMenu();
+            break;
+
+        case 's':
+            closeServerSocket();
+            halt = 1;
+            break;
         }
 
         // e preciso mudar a condicao do while para o op, eventualmente
         // op = getchar();
 
-    } while(halt != 1);
+    } while (halt != 1);
 
     printf("sai do askforinput\n");
 
     //closeShop();
-
 }
 
-void pastaAskForInput() {
+void pastaAskForInput()
+{
     do
     {
         printf("Escreve um comando: \n");
@@ -136,7 +143,8 @@ void pastaAskForInput() {
             //tempo_inicio_simulacao = time(NULL);
             printf("start?\n");
 
-            if (simPause) {
+            if (simPause)
+            {
                 simPause = 0;
             }
         }
@@ -151,17 +159,16 @@ void pastaAskForInput() {
             }
 
             simPause = 1;
-
         }
 
-        if (!strcmp(buffer, "abre\n")) {
+        if (!strcmp(buffer, "abre\n"))
+        {
             printf("hey do monitor - abre\n");
 
             if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
             {
                 exit(1);
             }
-
         }
 
         if (!strcmp(buffer, "dummy\n"))
@@ -172,236 +179,216 @@ void pastaAskForInput() {
             {
                 exit(1);
             }
-
         }
     } while (strcmp(buffer, "quit\n"));
 }
 
-/* void monitorRuntime() {
+int sendMessageSocket() {
 
-    do {
-        //
-    } while(op != 'q');
+    if (send(newsockfd, operation, sizeof(operation), 0) == -1)
+    {
 
-} */
+        printf("Falha de envio de mensagem no socket.\n");
+        return -1;
+    }
 
-void closeShop() {
-    printf("A sim terminou\n");
+    return 0;
+}
+
+void askForInputString()
+{
+    do
+    {
+        printf("Escreva um comando: \n");
+        fgets(operation, sizeof(operation), stdin);
+
+        if (!strcmp(operation, "menu\n")) {
+            displayMenu();
+        }
+
+        if (!strcmp(operation, "stats\n")){
+            displayStats();
+        }
+
+        if (!strcmp(operation, "init\n")) {
+            sendMessageSocket();
+            //tempo_inicio_simulacao = time(NULL);
+        }
+
+        if (!strcmp(operation, "halt\n")) {
+            sendMessageSocket();
+        }
+
+    } while (strcmp(operation, "quit\n"));
+}
+
+void pastaCharAskForInput()
+{
+
+    do
+    {
+        printf("Escreve um comando: \n");
+        //fgets(op, sizeof(op), stdin);
+        scanf("\n%c", &op);
+
+        switch (op) {
+
+        case 'i':
+            // sendMessageSocket();
+
+            if (send(newsockfd, op, sizeof(op), 0) == -1)
+            {
+
+                printf("Falha de envio de mensagem no socket.\n");
+                return -1;
+            }
+
+            isItOpen = 1;
+            if (simPause)
+            {
+                simPause = 0;
+            }
+            break;
+
+        case 'h':
+            sendMessageSocket();
+            if (!simPause)
+            {
+                simPause = 1;
+            }
+            break;
+
+        case 'q':
+            sendMessageSocket();
+            isItOpen = 0;
+            closeShop();
+            break;
+
+        case 'm':
+            displayMenu();
+            break;
+
+        case 's':
+            displayStats();
+            break;
+        }
+    } while (op != 'q');
+}
+
+void closeShop()
+{
+    printf("O programa terminou.\n");
 
     displayStats();
 
-    closeSocket();
-
+    closeServerSocket();
 }
 
-/*
+int openServerSocket()
+{
 
-Criação do socket entre o monitor (servidor) e o simulador (cliente).
-
-*/
-
-int startMonitorServerSocket() {
-
-    // char server_message[256] = "You have reached the server!"; // messageToLog
-
-    if ((monSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+    if ((sockfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    {
         printf("Não deu para criar o socket dude.\n");
+        return -1;
     }
 
     printf("Socket criado dude.\n");
 
-    // define the server address
-    bzero((char *)&monSocketAddress, sizeof(monSocketAddress));
-    monSocketAddress.sun_family = AF_UNIX;
-    strcpy(monSocketAddress.sun_path, UNIXSTR_PATH);
-    //monSocketAddress.sun_addr.s_addr = INADDR_ANY;
-    monLength = strlen(monSocketAddress.sun_path) + sizeof(monSocketAddress.sun_family);
+    bzero((char *)&serverAddr, sizeof(serverAddr));
+    serverAddr.sun_family = AF_UNIX;
+    strcpy(serverAddr.sun_path, UNIXSTR_PATH);
+    lengthServer = strlen(serverAddr.sun_path) + sizeof(serverAddr.sun_family);
 
     unlink(UNIXSTR_PATH);
 
-    // bind the socket to our specified IP and port
-    if (bind(monSocket, (struct sockaddr *) &monSocketAddress, monLength) < 0) {
+    if (bind(sockfd, (struct sockaddr *)&serverAddr, lengthServer) < 0)
+    {
         printf("Bind não feito.\n");
         return -1;
     }
 
     printf("Bind feito.\n");
 
-    // Listen
-    listen(monSocket, 1);
+    listen(sockfd, 1);
     printf("Listen feito.\n");
     printf("À espera do simulador...\n");
 
-    simSocketAddressLength = sizeof(simSocketAddress);
-
-    if ((monSocketConnection = accept(monSocket, (struct sockaddr *) &simSocketAddress, &simSocketAddressLength)) < 0) {
-        printf("Conexão falhada. ");
-        return -1;
-    }
-
-    printf("Conexão feita.\n");
-
-    // send the message
-    // send(monSocketConnection, server_message, sizeof(server_message), 0);
-
-    // close the socket
-    // close(monSocket);
-
-    return 0;
-
-}
-
-/*
-
-Criação do socket entre o monitor (cliente) e o simulador (servidor).
-
-*/
-
-int monLength;
-
-int startMonitorClientSocket() {
-
-    // char server_message[256] = "You have reached the server!"; // messageToLog
-
-    if ((monSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-        printf("Não deu para criar o socket dude.\n");
-    }
-
-    printf("Socket criado dude.\n");
-
-    // define the server address
-    bzero((char *)&monSocketAddress, sizeof(monSocketAddress));
-    monSocketAddress.sun_family = AF_UNIX;
-    strcpy(monSocketAddress.sun_path, UNIXSTR_PATH);
-    //monSocketAddress.sun_addr.s_addr = INADDR_ANY;
-    monLength = strlen(monSocketAddress.sun_path) + sizeof(monSocketAddress.sun_family);
-
-    if (connect(monSocket, (struct sockaddr *) &monSocketAddress, monLength) < 0) {
-        printf("Conexão falhada.\n");
-        return -1;
-    }
-
-    printf("Conexão feita.\n");
-
-    // send the message
-    // send(monSocketConnection, server_message, sizeof(server_message), 0);
-
-    // close the socket
-    // close(monSocket);
-
-    printf("prestes a sair da criação do socket\n");
-
-    return 0;
-
-}
-
-void socketPleaseStart() {
-
-    if ((sockfd=socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-        printf("cant open socket stream\n");
-    }
-		
-	serverAddr.sun_family=AF_UNIX;
-	strcpy(serverAddr.sun_path, UNIXSTR_PATH);
-	lengthServer = strlen(serverAddr.sun_path) + sizeof(serverAddr.sun_family);
-
-	unlink(UNIXSTR_PATH);
-
-	if (bind(sockfd, (struct sockaddr *) &serverAddr, lengthServer) < 0) {
-        printf("cant bind local address\n");
-    }
-		
-	listen(sockfd, 1);
-	
     int lengthClient = sizeof(clientAddr);
 
-	if ((newsockfd=accept(sockfd, (struct sockaddr *) &clientAddr, &lengthClient)) < 0) {
-        printf("accept error\n");
+    if ((newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &lengthClient)) < 0)
+    {
+        printf("Conexão falhada.");
+        return -1;
     }
+
+    printf("Conexão feita.\n");
+
+    return 0;
 }
 
-int outputMonitor;
+void *getMonitorMessages(void *tid)
+{
 
-/* void *recMSG(char* message) {
-    while(1) {
-        outputMonitor = read(client_socket, messageToLog, strlen(messageToLog));
-    }
-} */
-
-void *recMSGServer(void *tid) {
-
-    int sockfd = *((int *) tid);
+    int sockfd = *((int *)tid);
     int error = 0;
 
-    while(1) {
-        
+    while (1)
+    {
+
         error = 0;
 
-        do {
-            if((outputSuccessful = recv(sockfd, buffer, sizeof(buffer), 0)) <= 0) {
-                
-                if(outputSuccessful < 0) {
+        do
+        {
+            if ((outputSuccessful = recv(sockfd, buffer, sizeof(buffer), 0)) <= 0)
+            {
+
+                if (outputSuccessful < 0)
+                {
                     printf("recv error");
                 }
 
                 error = 1;
-
             }
 
             //printf("sim\n");
 
-            switch(opInt) {
-                case 1:
-                    printf("deu alguma coisa\n");
-                    break;
+            switch (opInt)
+            {
+            case 1:
+                printf("deu alguma coisa\n");
+                break;
             }
 
-        }while(!error);
-
+        } while (!error);
     }
-
 }
 
-void closeSocket() {
-    close(monSocketConnection);
-    close(monSocket);
+void closeServerSocket()
+{
+    close(newsockfd);
+    close(sockfd);
 }
 
-void initThreads() {
-
-    printf("prethread\n");
+void startMessageThread()
+{
 
     pthread_t tMessages;
-    pthread_create(&tMessages, NULL, &recMSGServer, &newsockfd);
-
-    printf("posthread\n");
-
-    //printf("PID do monitor: %d\n", getpid());
-
+    pthread_create(&tMessages, NULL, &getMonitorMessages, &newsockfd);
 }
 
-void main() {
-    //startServer();
+void main()
+{
 
-
-    //startMonitorSocket();
-    //startMonitorClientSocket();
-    socketPleaseStart();
-
-    //printf("fiz socket\n");
-    initThreads();
+    openServerSocket();
+    startMessageThread();
 
     displayHeader();
     displayMenu();
-    
-    //askForInput();
-    pastaAskForInput();
 
-    closeShop();
-    
-    //sendUtilMsg();
     //askForInput();
+    askForInputString();
+    //pastaAskForInput();
 
-    
-    //stopServer();
+    //closeShop();
 }

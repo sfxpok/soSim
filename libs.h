@@ -53,7 +53,10 @@ int avgTimeToServePonchaA;
 int avgTimeToServePonchaB;
 int avgTimeToServePonchaC;
 
+int maxClientsPerEmployee;
+
 char op;
+//char op[1];
 
 int outputSuccessful;
 char simBuffer[256];
@@ -90,11 +93,13 @@ int lengthServer;
 // pasta
 
 char buffer[256];
+char operation[64];
 
 // Semáforos
 
-sem_t semLine, semPA, semPB, semPC;
-sem_t semLoja;
+sem_t semClientManager;
+sem_t semClient;
+sem_t semEmployee;
 
 pthread_t tClient;
 

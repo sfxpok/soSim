@@ -279,21 +279,11 @@ void sendMessages(int idEvent)
     pthread_mutex_unlock(&msg);
 }
 
-void initCommunication()
-{
-}
-
-/* void closeSocket() {
-    close(sockfd);
-    exit(0);
-} */
-
-void semaphores()
-{
+void initCommunication() {
     //
 }
 
-int giveUp;
+/* int giveUp;
 int waitInLine;
 bool leaveStore = false;
 time_t arrivalTime;
@@ -333,27 +323,11 @@ void *lifeOfClient()
     printToScreen(logFile, messageToLog);
 
     return NULL;
-}
+} */
 
 void closeSocket()
 {
     close(simSocket);
-}
-
-int server_socket;
-
-void *sendingMessages()
-{
-
-    int n;
-    char buffer[256];
-
-    while (1)
-    {
-        if ((n = recv(server_socket, buffer, sizeof(buffer), 0)) > 0)
-        {
-        }
-    }
 }
 
 /*
@@ -362,9 +336,24 @@ Funcionamento do gestor de filas de clientes
 
 */
 
+pthread_mutex_t someMutex;
+int numberOfEmployeesToWork;
+
 void *clientManager(void *tid)
 {
-    //
+
+
+
+    while(!simPause) {
+
+        sem_wait(&semClientManager);
+        pthread_mutex_lock(&someMutex);
+
+        numberOfEmployeesToWork = ((clientsInLine / maxClientsPerEmployee) + 1);
+
+
+
+    }
 }
 
 /*
@@ -482,88 +471,21 @@ int randomNumberLoop()
     }
 }
 
-/*
-
-Recebe mensagens do simulador e envia pelo socket
-
-*/
-
-void *recMSG()
-{
-
-    printf("tou na thread das mensagens\n");
-
-    while (1)
-    {
-
-        printf("tou no loop\n");
-
-        if ((outputSuccessful = recv(sockfd, opInt, sizeof(opInt), 0)) > 0)
-        {
-
-            printf("tou dentro do recv\n");
-
-            simBuffer[outputSuccessful] = "\0";
-
-            switch (opInt)
-            {
-
-            case 1:
-                printf("\nSim init\n");
-                isItOpen = 1;
-                break;
-
-            case 2:
-                printf("\nSim pause\n");
-                isItOpen = 0;
-                break;
-            }
-        }
-
-        else
-        {
-
-            if (outputSuccessful < 0)
-            {
-                printf("Erro no recv");
-            }
-            else
-            {
-                printf("\nServidor não tem conexão.\n");
-            }
-
-            exit(1);
-        }
-    }
-
-    close(sockfd);
-    closeSocket();
-    return NULL;
-}
-
 // copypasta
 
 void *pasta()
 {
     int n;
     char buffer[256];
+    //char operation[64];
     //Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
     while (1)
     {
-        if ((n = recv(sockfd, buffer, sizeof(buffer), 0)) > 0)
+        if ((n = recv(sockfd, operation, sizeof(operation), 0)) > 0)
         {
             buffer[n] = '\0';
-            if (!strcmp(buffer, "abre\n"))
-            {
-                printf("abre a loja dude\n");
-                isItOpen = 1;
-            }
-            if (!strcmp(buffer, "start\n"))
-            {
-                printf("\nSimulacao iniciada\n\n");
-                isItOpen = 1;
-                //pausa = 0;
-            }
+            operation[n] = '\0';
+
             if (!strcmp(buffer, "pause\n"))
             {
                 printf("\nSimulacao parada\n\n");
@@ -571,16 +493,30 @@ void *pasta()
                 sprintf(buffer, "pause");
                 send(sockfd, buffer, sizeof(buffer), 0);
             }
-            if (!strcmp(buffer, "dummy\n"))
-            {
-                printf("dummy command\n");
+
+            if(!strcmp(operation, "init\n")) {
+
+                printf("Simulação a correr...\n");
+
                 isItOpen = 1;
+                if (simPause) {
+                    simPause = 0;
+                }
+            }
+
+            if(!strcmp(operation, "halt\n")) {
+
+                printf("Simulação em pausa...\n");
+
+                if (!simPause) {
+                    simPause = 1;
+                }
             }
         }
         else
         {
             if (n < 0)
-                perror("recv");
+                printf("recv error");
             else
                 printf("\nServer closed connection\n");
             exit(1);
@@ -671,103 +607,8 @@ int startSimulatorClientSocket()
 
     printf("Conexão feita.\n");
 
-    // recieve data from the server
-    //char server_response[256];
-    //recv(simSocket, &server_response, sizeof(server_response), 0);
-
-    // print out the server's response
-    //printf("The server sent the data: %s\n", server_response);
-
-    // and then close the socket
-    // close(simSocket);
-
     return 0;
 }
-
-/*
-
-Criação da ligação entre o monitor (cliente) e o simulador (servidor).
-
-*/
-
-int monSocketAddressLength;
-
-void startSimulatorServerSocket()
-{
-
-    // create a socket
-
-    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-    {
-        printf("Não foi possível criar a socket.\n");
-        return -1;
-    }
-
-    printf("Socket foi criada.\n");
-
-    // specify an address for the socket
-    //struct sockaddr_in simSocketAddress;
-    bzero((char *)&simSocketAddress, sizeof(simSocketAddress));
-    simSocketAddress.sun_family = AF_UNIX;
-    //simSocketAddress.sun_port = htons(PORT);
-    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
-    //simSocketAddress.sun_addr.s_addr = INADDR_ANY;
-    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
-
-    unlink(UNIXSTR_PATH);
-
-    if (bind(simSocket, (struct sockaddr *)&simSocketAddress, simLength) < 0)
-    {
-        printf("Bind não feito.\n");
-        return -1;
-    }
-
-    printf("Bind feito.\n");
-
-    // Listen
-    listen(simSocket, 1);
-    printf("Listen feito.\n");
-    printf("À espera do monitor...\n");
-
-    monSocketAddressLength = sizeof(monSocketAddress);
-
-    if ((simSocketConnection = accept(simSocket, (struct sockaddr *)&monSocketAddress, &monSocketAddressLength)) < 0)
-    {
-        printf("Conexão falhada. ");
-        return -1;
-    }
-
-    printf("Conexão feita.\n");
-
-    // recieve data from the server
-    //char server_response[256];
-    //recv(simSocket, &server_response, sizeof(server_response), 0);
-
-    // print out the server's response
-    //printf("The server sent the data: %s\n", server_response);
-
-    // and then close the socket
-    // close(simSocket);
-
-    return 0;
-}
-
-/* 
-void altStartSimulatorSocket() {
-    //Criacao do socket UNIX e associacao ao Simulador
-    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-        perror("cant open socket stream");
-    simSocketAddress.sun_family = AF_UNIX;
-    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
-    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
-    unlink(UNIXSTR_PATH);
-    if (bind(simSocket, (struct sockaddr *)&simSocketAddress, simLength) < 0)
-        perror("cant bind local address");
-    listen(simSocket, 1);
-
-    printf("alt socket criada\n");
-
-} */
 
 void socketStartPleaseClient()
 {
@@ -795,10 +636,15 @@ void threadMessage()
     pthread_create(&tMessages, NULL, &pasta, NULL);
 }
 
+void startSemaphores() {
+
+    sem_init(&semClientManager, 0, 0);
+    sem_init(&semClient, 0, 0);
+    sem_init(&semEmployee, 0, 1);
+}
+
 void main()
 {
-
-    // sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     initSimulation();
 
@@ -807,6 +653,7 @@ void main()
     socketStartPleaseClient();
 
     threadMessage();
+    startSemaphores();
 
     while (!isItOpen)
     {
@@ -833,6 +680,6 @@ void main()
 
     }
 
-    // fim de inicialização
+    //closeShop();
 
 }
