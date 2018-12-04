@@ -97,9 +97,10 @@ char operation[64];
 
 // Semáforos
 
-sem_t semClientManager;
-sem_t semClient;
 sem_t semEmployee;
+sem_t semQueueManager;
+sem_t semRestock;
+sem_t semAvailableProduct;
 
 pthread_t tClient;
 

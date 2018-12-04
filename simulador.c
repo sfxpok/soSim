@@ -346,7 +346,7 @@ void *clientManager(void *tid)
 
     while(!simPause) {
 
-        sem_wait(&semClientManager);
+        sem_wait(&semQueueManager);
         pthread_mutex_lock(&someMutex);
 
         numberOfEmployeesToWork = ((clientsInLine / maxClientsPerEmployee) + 1);
@@ -638,9 +638,11 @@ void threadMessage()
 
 void startSemaphores() {
 
-    sem_init(&semClientManager, 0, 0);
-    sem_init(&semClient, 0, 0);
     sem_init(&semEmployee, 0, 1);
+    sem_init(&semQueueManager, 0, 0);
+    sem_init(&semRestock, 0, 0);
+    sem_init(&semAvailableProduct, 0, 0);
+    
 }
 
 void main()
