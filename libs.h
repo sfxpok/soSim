@@ -55,6 +55,18 @@ int avgTimeToServePonchaC;
 
 int maxClientsPerEmployee;
 
+int actualEmployeesUsedNow;
+
+int unitsPonchaA;
+int unitsPonchaB;
+int unitsPonchaC;
+
+int stockWarehouse;
+
+int idClient = 0;
+
+int probWithdrawl;
+
 char op;
 //char op[1];
 
@@ -94,6 +106,10 @@ int lengthServer;
 
 char buffer[256];
 char operation[64];
+
+// Trincos
+
+pthread_mutex_t monitorFlag;
 
 // Semáforos
 

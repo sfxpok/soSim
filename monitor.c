@@ -330,8 +330,11 @@ int openServerSocket()
 void *getMonitorMessages(void *tid)
 {
 
+    int n;
     int sockfd = *((int *)tid);
     int error = 0;
+    char eventMessage[20];
+    int someInteger = 0;
 
     while (1)
     {
@@ -340,10 +343,10 @@ void *getMonitorMessages(void *tid)
 
         do
         {
-            if ((outputSuccessful = recv(sockfd, buffer, sizeof(buffer), 0)) <= 0)
+            if ((n = recv(sockfd, buffer, sizeof(buffer), 0)) <= 0)
             {
 
-                if (outputSuccessful < 0)
+                if (n < 0)
                 {
                     printf("recv error");
                 }
@@ -351,13 +354,22 @@ void *getMonitorMessages(void *tid)
                 error = 1;
             }
 
-            //printf("sim\n");
+            sscanf(buffer, "%s %d %s", eventMessage, getTimeStamp(), &someInteger);
 
-            switch (opInt)
-            {
-            case 1:
-                printf("deu alguma coisa\n");
-                break;
+            if (!strcmp(eventMessage, "AddEmployee")) {
+                logFile = fopen("log.txt", "a+");
+				if(logFile != NULL)
+				{					
+					fprintf(logFile,"%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someInteger);
+					fclose(logFile);
+				}
+				printf("%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someInteger);
+				actualEmployeesUsedNow++;
+				if(actualEmployeesUsedNow > maxEmployeesUsed)
+				{
+					maxEmployeesUsed = actualEmployeesUsedNow;
+				}
+				//Codificação: ADICIONAR_EMPREGADO HORAS ID
             }
 
         } while (!error);

@@ -342,7 +342,7 @@ int numberOfEmployeesToWork;
 void *clientManager(void *tid)
 {
 
-
+    char bufferMonitor[512];
 
     while(!simPause) {
 
@@ -351,7 +351,35 @@ void *clientManager(void *tid)
 
         numberOfEmployeesToWork = ((clientsInLine / maxClientsPerEmployee) + 1);
 
+        if(numberOfEmployeesToWork > actualEmployeesUsedNow) {
 
+            actualEmployeesUsedNow = numberOfEmployeesToWork;
+            actualEmployeesUsedNow++;
+
+            sem_post(&semEmployee);
+
+            printf("O funcionário %d foi posto no serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
+
+            sprintf(bufferMonitor, "AddEmployee %d %s", numberOfEmployeesToWork, getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        }
+        else if(numberOfEmployeesToWork < actualEmployeesUsedNow) {
+            
+            actualEmployeesUsedNow = numberOfEmployeesToWork;
+            actualEmployeesUsedNow--;
+
+            printf("O funcionário %d deixou o serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
+
+            sprintf(bufferMonitor, "RemoveEmployee %d %s", (numberOfEmployeesToWork+1), getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        }
+        else {
+            sem_post(&semEmployee);
+        }
+
+        pthread_mutex_unlock(&someMutex);
 
     }
 }
@@ -364,7 +392,32 @@ Funcionamento do empregado
 
 void *employee(void *tid)
 {
-    //
+    char bufferMonitor[512];
+
+    while(!simPause) {
+
+        sem_wait(&semRestock);
+        pthread_mutex_lock(&someMutex);
+
+        if(unitsPonchaA <= 3) {
+
+            sleep(1);
+
+            unitsPonchaA = unitsPonchaA + stockWarehouse;
+
+            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'A', getTimeStamp());
+
+            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        }
+
+
+        pthread_mutex_unlock(&someMutex);
+        sem_post(&semAvailableProduct);
+
+    }
+
 }
 
 /*
@@ -375,7 +428,39 @@ Funcionamento do cliente
 
 void *client(void *tid)
 {
-    //
+    
+    char bufferMonitor[512];
+    int thresholdToGiveUp;
+
+    pthread_mutex_lock(&someMutex);
+
+    int waitingTime = getRandomNumber(10);
+    idClient++;
+    clientsInLine++;
+
+    time_t arrivalTime = time(NULL);
+
+    printf("O cliente %d acabou de chegar às %s.\n", idClient, getTimeStamp());
+	sprintf(bufferMonitor, "ClientArrived %d %s", idClient, getTimeStamp());
+	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+	pthread_mutex_unlock(&someMutex);
+
+    sem_wait(&semEmployee);
+    pthread_mutex_lock(&someMutex);
+
+    clientsInLine--;
+
+    if ((time(NULL) - arrivalTime) > waitingTime) {
+
+        thresholdToGiveUp = getRandomNumber(100);
+
+        if (thresholdToGiveUp <= probWithdrawl) {
+            
+        }
+
+    }
+
 }
 
 void threadsShop()
@@ -516,9 +601,9 @@ void *pasta()
         else
         {
             if (n < 0)
-                printf("recv error");
+                printf("Erro na recepção de informação.");
             else
-                printf("\nServer closed connection\n");
+                printf("\nServidor foi desligado.\n");
             exit(1);
         }
     }
@@ -661,6 +746,10 @@ void main()
     {
         sleep(1); // a espera que a simulação inicie pelo monitor
     }
+
+    //pthread_mutex_lock(&monitorFlag);
+    //pthread_mutex_unlock(&monitorFlag);
+
 
     // inicialização de variáveis devido ao começo da simulação
 
