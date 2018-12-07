@@ -20,9 +20,9 @@ void readConfig()
         simulador.maxClients = 3;
         simulador.spawnedClients = 6;
         estatistica.avgTimeArrivalClients = 3;
-        simulador.timeToServePonchaA = 2;
-        simulador.timeToServePonchaB = 3;
-        simulador.timeToServePonchaC = 4;
+        simulador.timeToServeCoffeeA = 2;
+        simulador.timeToServeCoffeeB = 3;
+        simulador.timeToServeCoffeeC = 4;
         simulador.probWithdrawl = 2;
         simulador.openingTime = 10;
         simulador.closingTime = 13;
@@ -43,13 +43,13 @@ void readConfig()
             else if (strcmp(param, "spawnedClients") == 0)
                 simulador.spawnedClients = value;
             else if (strcmp(param, "avgTimeArrivalClients") == 0)
-                estatistica.avgTimeArrivalClients = value;
-            else if (strcmp(param, "timeToServePonchaA") == 0)
-                simulador.timeToServePonchaA = value;
-            else if (strcmp(param, "timeToServePonchaB") == 0)
-                simulador.timeToServePonchaB = value;
-            else if (strcmp(param, "timeToServePonchaC") == 0)
-                simulador.timeToServePonchaC = value;
+                avgTimeArrivalClients = value;
+            else if (strcmp(param, "timeToServeCoffeeA") == 0)
+                simulador.timeToServeCoffeeA = value;
+            else if (strcmp(param, "timeToServeCoffeeB") == 0)
+                simulador.timeToServeCoffeeB = value;
+            else if (strcmp(param, "timeToServeCoffeeC") == 0)
+                simulador.timeToServeCoffeeC = value;
             else if (strcmp(param, "probWithdrawl") == 0)
                 simulador.probWithdrawl = value;
             else if (strcmp(param, "openingTime") == 0)
@@ -106,48 +106,48 @@ void giveUpClient(int idClient)
     writeLogFiles(messageToLog);
 }
 
-void askForPoncha(int idClient, char charPoncha)
+void askForCoffee(int idClient, char charCoffee)
 {
 
-    // printf("O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+    // printf("O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
 
-    switch (charPoncha)
+    switch (charCoffee)
     {
     case 'A':
-        // da-lhe poncha A
+        // da-lhe Coffee A
 
-        if (simulador.unitsPonchaA < 2)
+        if (simulador.unitsCoffeeA < 2)
         {
             // cliente espera
         }
 
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
         writeOutputToMonitor(messageToLog);
         writeLogFiles(messageToLog);
 
         break;
     case 'B':
-        // da-lhe poncha B
+        // da-lhe Coffee B
 
-        if (simulador.unitsPonchaB < 2)
+        if (simulador.unitsCoffeeB < 2)
         {
             // cliente espera
         }
 
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
         writeOutputToMonitor(messageToLog);
         writeLogFiles(messageToLog);
 
         break;
     case 'C':
-        // da-lhe poncha C
+        // da-lhe Coffee C
 
-        if (simulador.unitsPonchaC < 2)
+        if (simulador.unitsCoffeeC < 2)
         {
             // cliente espera
         }
 
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela poncha %c.\n", idClient, charPoncha);
+        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
         writeOutputToMonitor(messageToLog);
         writeLogFiles(messageToLog);
 
@@ -155,7 +155,7 @@ void askForPoncha(int idClient, char charPoncha)
     }
 }
 
-void givePonchaToClient(int idClient, char charPoncha, int idEmployee)
+void giveCoffeeToClient(int idClient, char charCoffee, int idEmployee)
 {
     //
 }
@@ -170,22 +170,22 @@ void appendFinalReport()
     //
 }
 
-void restockPoncha(int idEmployee, char charPoncha)
+void restockCoffee(int idEmployee, char charCoffee)
 {
 
-    switch (charPoncha)
+    switch (charCoffee)
     {
     case 'a':
-        // repoe poncha A
-        printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
+        // repoe Coffee A
+        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
         break;
     case 'b':
-        // repoe poncha B
-        printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
+        // repoe Coffee B
+        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
         break;
     case 'c':
-        // repoe poncha C
-        printf("O empregado %d repôs a poncha %c.\n", idEmployee, charPoncha);
+        // repoe Coffee C
+        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
         break;
     }
 }
@@ -200,7 +200,7 @@ void moveEmployeeToWarehouse(int idEmployee)
     //
 }
 
-void checkIfProductIsOutOfStock(char charPoncha)
+void checkIfProductIsOutOfStock(char charCoffee)
 {
     //
 }
@@ -394,24 +394,46 @@ void *employee(void *tid)
 {
     char bufferMonitor[512];
 
-    while(!simPause) {
+    while (!simPause) {
 
         sem_wait(&semRestock);
         pthread_mutex_lock(&someMutex);
 
-        if(unitsPonchaA <= 3) {
+        if (unitsCoffeeA <= 3) {
 
             sleep(1);
 
-            unitsPonchaA = unitsPonchaA + stockWarehouse;
+            unitsCoffeeA = unitsCoffeeA + stockWarehouse;
 
             printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'A', getTimeStamp());
-
             sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
 
+        else if (unitsCoffeeB <= 3) {
+
+            sleep(1);
+
+            unitsCoffeeB = unitsCoffeeB + stockWarehouse;
+
+            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'B', getTimeStamp());
+            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        }
+
+        else if (unitsCoffeeC <= 3) {
+
+            sleep(1);
+
+            unitsCoffeeC = unitsCoffeeC + stockWarehouse;
+
+            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'C', getTimeStamp());
+            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        }
 
         pthread_mutex_unlock(&someMutex);
         sem_post(&semAvailableProduct);
@@ -429,8 +451,12 @@ Funcionamento do cliente
 void *client(void *tid)
 {
     
+    printf("sim\n");
+
     char bufferMonitor[512];
-    int thresholdToGiveUp;
+    int probabilityThreshold;
+
+    time_t waitingTimeInLine;
 
     pthread_mutex_lock(&someMutex);
 
@@ -453,13 +479,114 @@ void *client(void *tid)
 
     if ((time(NULL) - arrivalTime) > waitingTime) {
 
-        thresholdToGiveUp = getRandomNumber(100);
+        probabilityThreshold = getRandomNumber(100);
 
-        if (thresholdToGiveUp <= probWithdrawl) {
+        if (probabilityThreshold <= probWithdrawl) {
             
+            printf("O cliente %d desistiu às %s.\n", idClient, getTimeStamp());
+	        sprintf(bufferMonitor, "GiveUpClient %d %s", idClient, getTimeStamp());
+	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+            sem_post(&semQueueManager);
+			pthread_mutex_unlock(&someMutex);
+
+            return NULL;
+
         }
 
     }
+
+        // pthread_mutex_unlock(&someMutex);
+	    // pthread_mutex_lock(&someMutex);
+
+        unitsBought = getRandomNumber(5);
+        coffee = getRandomNumber(3);
+
+        waitingTimeInLine = time(NULL) - arrivalTime;
+
+        printf("O cliente %d pediu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
+	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+        probabilityThreshold = getRandomNumber(100);
+
+        if (probabilityThreshold <= probChangeOrder) {
+            
+            int aux = coffee;
+
+            while (aux == coffee) {
+                unitsBought = getRandomNumber(5);
+                coffee = getRandomNumber(3);
+            }
+
+            printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
+	        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+            
+        }
+
+        switch(coffee) {
+
+            case 1:
+                while (unitsCoffeeA <= 3) {
+                    sem_post(&semRestock);
+                    pthread_mutex_unlock(&someMutex);
+                    sem_wait(&semAvailableProduct);
+                    pthread_mutex_lock(&someMutex);
+                }
+
+                pthread_mutex_unlock(&someMutex);
+                sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2);
+                pthread_mutex_lock(&someMutex);
+
+                unitsCoffeeA = unitsCoffeeA - unitsBought;
+
+                break;
+
+            case 2:
+                while (unitsCoffeeB <= 3) {
+                    sem_post(&semRestock);
+                    pthread_mutex_unlock(&someMutex);
+                    sem_wait(&semAvailableProduct);
+                    pthread_mutex_lock(&someMutex);
+                }
+
+                pthread_mutex_unlock(&someMutex);
+                sleep(getRandomNumber(timeToServeCoffeeB) + timeToServeCoffeeB * 0.2);
+                pthread_mutex_lock(&someMutex);
+
+                unitsCoffeeB = unitsCoffeeB - unitsBought;
+
+                break;
+
+            case 3:
+                while (unitsCoffeeC <= 3) {
+                    sem_post(&semRestock);
+                    pthread_mutex_unlock(&someMutex);
+                    sem_wait(&semAvailableProduct);
+                    pthread_mutex_lock(&someMutex);
+                }
+
+                pthread_mutex_unlock(&someMutex);
+                sleep(getRandomNumber(timeToServeCoffeeC) + timeToServeCoffeeC * 0.2);
+                pthread_mutex_lock(&someMutex);
+
+                unitsCoffeeC = unitsCoffeeC - unitsBought;
+
+                break;                
+
+        }
+
+    timeToServeClient = time(NULL) - waitingTimeInLine;
+
+    printf("O cliente %d recebeu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
+	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+    
+    sem_post(&semQueueManager);
+    pthread_mutex_unlock(&someMutex);
+
+    return 0;
 
 }
 
@@ -727,6 +854,8 @@ void startSemaphores() {
     sem_init(&semQueueManager, 0, 0);
     sem_init(&semRestock, 0, 0);
     sem_init(&semAvailableProduct, 0, 0);
+
+    printf("Semáforos inicializados.\n");
     
 }
 
@@ -753,6 +882,7 @@ void main()
 
     // inicialização de variáveis devido ao começo da simulação
 
+    timeCounter = 100;
     openingTime = time(0);
     closingTime = openingTime + timeCounter;
 

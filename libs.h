@@ -46,20 +46,20 @@ int totalWithdrawls;
 int totalChangedOrder;
 int maxEmployeesUsed;
 int actualEmployeesUsedNow;
-int unitsSoldPonchaA;
-int unitsSoldPonchaB;
-int unitsSoldPonchaC;
-int avgTimeToServePonchaA;
-int avgTimeToServePonchaB;
-int avgTimeToServePonchaC;
+int unitsSoldCoffeeA;
+int unitsSoldCoffeeB;
+int unitsSoldCoffeeC;
+int avgTimeToServeCoffeeA;
+int avgTimeToServeCoffeeB;
+int avgTimeToServeCoffeeC;
 
 int maxClientsPerEmployee;
 
 int actualEmployeesUsedNow;
 
-int unitsPonchaA;
-int unitsPonchaB;
-int unitsPonchaC;
+int unitsCoffeeA;
+int unitsCoffeeB;
+int unitsCoffeeC;
 
 int stockWarehouse;
 
@@ -77,6 +77,17 @@ int opInt;
 int halt;
 
 int simPause;
+
+int unitsBought;
+int coffee;
+
+int probChangeOrder;
+
+int timeToServeCoffeeA; // importante para inicialização
+int timeToServeCoffeeB; // importante para inicialização
+int timeToServeCoffeeC; // importante para inicialização
+
+int timeToServeClient;
 
 // Variáveis - SOCKETS
 
@@ -127,12 +138,12 @@ struct shop {
     int maxEmployees;
     int maxClientsPerEmployee;
     int spawnedClients;
-    int timeToServePonchaA; // importante para inicialização
-    int timeToServePonchaB; // importante para inicialização
-    int timeToServePonchaC; // importante para inicialização
-    int unitsPonchaA;
-    int unitsPonchaB;
-    int unitsPonchaC;
+    int timeToServeCoffeeA; // importante para inicialização
+    int timeToServeCoffeeB; // importante para inicialização
+    int timeToServeCoffeeC; // importante para inicialização
+    int unitsCoffeeA;
+    int unitsCoffeeB;
+    int unitsCoffeeC;
     int replacersProducts;
     int probChangeOrder;
     int probWithdrawl; // importante para inicialização
@@ -151,12 +162,12 @@ struct stats {
     int totalChangedOrder;
     int maxEmployeesUsed;
     int actualEmployeesUsedNow;
-    int unitsSoldPonchaA;
-    int unitsSoldPonchaB;
-    int unitsSoldPonchaC;
-    int avgTimeToServePonchaA;
-    int avgTimeToServePonchaB;
-    int avgTimeToServePonchaC;
+    int unitsSoldCoffeeA;
+    int unitsSoldCoffeeB;
+    int unitsSoldCoffeeC;
+    int avgTimeToServeCoffeeA;
+    int avgTimeToServeCoffeeB;
+    int avgTimeToServeCoffeeC;
     int durationOpen; // importante para inicialização
 };
 

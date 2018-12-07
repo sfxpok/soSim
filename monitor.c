@@ -52,12 +52,12 @@ void displayStats()
     printf("├─────────────────────────────────────────────────────────────┤\n");
     printf("│ ### Produtos ###                                            │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│Vendas do produto 1: %d                                      │\n", unitsSoldPonchaA);
-    printf("│Vendas do produto 2: %d                                      │\n", unitsSoldPonchaB);
-    printf("│Vendas do produto 3: %d                                      │\n", unitsSoldPonchaC);
-    printf("│Tempo médio de serviço do produto 1: %d                      │\n", avgTimeToServePonchaA);
-    printf("│Tempo médio de serviço do produto 2: %d                      │\n", avgTimeToServePonchaB);
-    printf("│Tempo médio de serviço do produto 3: %d                      │\n", avgTimeToServePonchaC);
+    printf("│Vendas do produto 1: %d                                      │\n", unitsSoldCoffeeA);
+    printf("│Vendas do produto 2: %d                                      │\n", unitsSoldCoffeeB);
+    printf("│Vendas do produto 3: %d                                      │\n", unitsSoldCoffeeC);
+    printf("│Tempo médio de serviço do produto 1: %d                      │\n", avgTimeToServeCoffeeA);
+    printf("│Tempo médio de serviço do produto 2: %d                      │\n", avgTimeToServeCoffeeB);
+    printf("│Tempo médio de serviço do produto 3: %d                      │\n", avgTimeToServeCoffeeC);
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
@@ -327,6 +327,10 @@ int openServerSocket()
     return 0;
 }
 
+void openForAppend() {
+    logFile = fopen("log.txt", "a+");
+}
+
 void *getMonitorMessages(void *tid)
 {
 
@@ -334,7 +338,9 @@ void *getMonitorMessages(void *tid)
     int sockfd = *((int *)tid);
     int error = 0;
     char eventMessage[20];
-    int someInteger = 0;
+    int someIntegerA = 0;
+    int someIntegerB = 0;
+    int someIntegerC = 0;
 
     while (1)
     {
@@ -354,22 +360,64 @@ void *getMonitorMessages(void *tid)
                 error = 1;
             }
 
-            sscanf(buffer, "%s %d %s", eventMessage, getTimeStamp(), &someInteger);
+            sscanf(buffer, "%s %s %d %d %d", eventMessage, getTimeStamp(), &someIntegerA, &someIntegerB, &someIntegerC);
 
-            if (!strcmp(eventMessage, "AddEmployee")) {
+            if (!strcmp(eventMessage, "AddClient")) {
+                openForAppend();
+
+             /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - Cliente número %d chegou.\n", getTimeStamp(), someIntegerA);
+
+                createdClients++;
+                clientsInLine++;
+
+            }
+
+            else if (!strcmp(eventMessage, "GiveUpClient")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "ChangedOrder")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "AddEmployee")) {
                 logFile = fopen("log.txt", "a+");
 				if(logFile != NULL)
 				{					
-					fprintf(logFile,"%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someInteger);
+					fprintf(logFile,"%s - O empregado %d foi adicionado.\n", getTimeStamp(), someIntegerA);
 					fclose(logFile);
 				}
-				printf("%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someInteger);
+				printf("%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someIntegerA);
 				actualEmployeesUsedNow++;
 				if(actualEmployeesUsedNow > maxEmployeesUsed)
 				{
 					maxEmployeesUsed = actualEmployeesUsedNow;
 				}
 				//Codificação: ADICIONAR_EMPREGADO HORAS ID
+            }
+
+            else if (!strcmp(eventMessage, "RemoveEmployee")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "AskForCoffee")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "GiveCoffee")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "ReceiveCoffee")) {
+
+            }
+
+            else if (!strcmp(eventMessage, "RestockCoffee")) {
+
             }
 
         } while (!error);
