@@ -17,18 +17,18 @@ void readConfig()
         printf("Erro ao abrir o ficheiro. O programa irá usar valores pré-definidos.");
 
         // Valores pré-definidos
-        simulador.maxClients = 3;
-        simulador.spawnedClients = 6;
-        estatistica.avgTimeArrivalClients = 3;
-        simulador.timeToServeCoffeeA = 2;
-        simulador.timeToServeCoffeeB = 3;
-        simulador.timeToServeCoffeeC = 4;
-        simulador.probWithdrawl = 2;
-        simulador.openingTime = 10;
-        simulador.closingTime = 13;
-        simulador.timeCounter = 0;
-        simulador.isItOpen = 1;
-        estatistica.durationOpen = 0;
+        maxClients = 3;
+        spawnedClients = 6;
+        avgTimeArrivalClients = 3;
+        timeToServeCoffeeA = 2;
+        timeToServeCoffeeB = 3;
+        timeToServeCoffeeC = 4;
+        probWithdrawl = 2;
+        openingTime = 10;
+        closingTime = 13;
+        timeCounter = 0;
+        isItOpen = 0;
+        durationOpen = 0;
     }
 
     else
@@ -39,29 +39,35 @@ void readConfig()
         {
 
             if (strcmp(param, "maxClients") == 0)
-                simulador.maxClients = value;
+                maxClients = value;
             else if (strcmp(param, "spawnedClients") == 0)
-                simulador.spawnedClients = value;
+                spawnedClients = value;
             else if (strcmp(param, "avgTimeArrivalClients") == 0)
                 avgTimeArrivalClients = value;
             else if (strcmp(param, "timeToServeCoffeeA") == 0)
-                simulador.timeToServeCoffeeA = value;
+                timeToServeCoffeeA = value;
             else if (strcmp(param, "timeToServeCoffeeB") == 0)
-                simulador.timeToServeCoffeeB = value;
+                timeToServeCoffeeB = value;
             else if (strcmp(param, "timeToServeCoffeeC") == 0)
-                simulador.timeToServeCoffeeC = value;
+                timeToServeCoffeeC = value;
             else if (strcmp(param, "probWithdrawl") == 0)
-                simulador.probWithdrawl = value;
+                probWithdrawl = value;
             else if (strcmp(param, "openingTime") == 0)
-                simulador.openingTime = value;
+                openingTime = value;
             else if (strcmp(param, "closingTime") == 0)
-                simulador.closingTime = value;
+                closingTime = value;
             else if (strcmp(param, "timeCounter") == 0)
-                simulador.timeCounter = value;
+                timeCounter = value;
             else if (strcmp(param, "isItOpen") == 0)
-                simulador.isItOpen = value;
+                isItOpen = value;
             else if (strcmp(param, "durationOpen") == 0)
-                estatistica.durationOpen = value;
+                durationOpen = value;
+            else if (strcmp(param, "unitsCoffeeA") == 0)
+                unitsCoffeeA = value;
+            else if (strcmp(param, "unitsCoffeeB") == 0)
+                unitsCoffeeB = value;
+            else if (strcmp(param, "unitsCoffeeC") == 0)
+                unitsCoffeeC = value;
         }
 
         fclose(fileConfig);
@@ -258,7 +264,7 @@ pthread_mutex_t msg;
 void sendMessages(int idEvent)
 {
 
-    sprintf(messageToLog, "%d", idEvent);
+    //sprintf(messageToLog, "%d", idEvent);
 
     pthread_mutex_lock(&msg);
 
@@ -451,7 +457,7 @@ Funcionamento do cliente
 void *client(void *tid)
 {
     
-    printf("sim\n");
+    printf("### Cliente foi criado. (thread) ###\n");
 
     char bufferMonitor[512];
     int probabilityThreshold;
@@ -515,7 +521,7 @@ void *client(void *tid)
             int aux = coffee;
 
             while (aux == coffee) {
-                unitsBought = getRandomNumber(5);
+                unitsBought = getRandomNumber(2);
                 coffee = getRandomNumber(3);
             }
 
@@ -533,7 +539,7 @@ void *client(void *tid)
                     pthread_mutex_unlock(&someMutex);
                     sem_wait(&semAvailableProduct);
                     pthread_mutex_lock(&someMutex);
-                }
+                }   
 
                 pthread_mutex_unlock(&someMutex);
                 sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2);

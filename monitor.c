@@ -377,21 +377,41 @@ void *getMonitorMessages(void *tid)
             }
 
             else if (!strcmp(eventMessage, "GiveUpClient")) {
+                openForAppend();
+
+             /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - Cliente número %d desistiu.\n", getTimeStamp(), someIntegerA);
+
+                clientsInLine--;         
+                totalWithdrawls++;       
 
             }
 
             else if (!strcmp(eventMessage, "ChangedOrder")) {
+                openForAppend();
+
+             /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O cliente %d alterou o seu pedido e pediu %d unidades do café %d.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
+
+                totalChangedOrder++;
 
             }
 
             else if (!strcmp(eventMessage, "AddEmployee")) {
-                logFile = fopen("log.txt", "a+");
-				if(logFile != NULL)
+                openForAppend();
+
+				/* if(logFile != NULL)
 				{					
 					fprintf(logFile,"%s - O empregado %d foi adicionado.\n", getTimeStamp(), someIntegerA);
 					fclose(logFile);
-				}
-				printf("%s - O empregado numero %d foi adicionado.\n", getTimeStamp(), someIntegerA);
+				} */
+				printf("%s - O funcionário numero %d foi adicionado.\n", getTimeStamp(), someIntegerA);
 				actualEmployeesUsedNow++;
 				if(actualEmployeesUsedNow > maxEmployeesUsed)
 				{
@@ -401,22 +421,63 @@ void *getMonitorMessages(void *tid)
             }
 
             else if (!strcmp(eventMessage, "RemoveEmployee")) {
+                openForAppend();
 
+             /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O funcionário %d foi removido.\n", getTimeStamp(), someIntegerA);
+
+                actualEmployeesUsedNow--;
             }
 
             else if (!strcmp(eventMessage, "AskForCoffee")) {
+                openForAppend();
+
+             /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O cliente %d pediu pelo café.\n", getTimeStamp(), someIntegerA);
+
+                // incrementa as vendas aqui ou não?
 
             }
 
             else if (!strcmp(eventMessage, "GiveCoffee")) {
+                openForAppend();
+
+                /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O funcionário %d deu o café %d ao cliente %d.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
             }
 
             else if (!strcmp(eventMessage, "ReceiveCoffee")) {
+                openForAppend();
 
+                /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O cliente %d recebeu o café %d.\n", getTimeStamp(), someIntegerA, someIntegerB);
+
+                clientsInLine--;
             }
 
             else if (!strcmp(eventMessage, "RestockCoffee")) {
+                openForAppend();
+
+                /* if (logFile != NULL) {
+                    fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
+                } */
+
+                printf("%s - O funcionário %d repôs o café %d.\n", getTimeStamp(), someIntegerA, someIntegerB);
+
+                // tira os cafés do armazém?
 
             }
 

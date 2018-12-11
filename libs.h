@@ -33,6 +33,11 @@ time_t     UNIXts;
 struct tm  ts;
 char       hmsTimeStamp[80];
 
+int maxClients;
+int spawnedClients;
+int durationOpen;
+
+
 int simSocket;
 int isItOpen;
 int openingTime;
