@@ -505,7 +505,7 @@ void *client(void *tid)
         // pthread_mutex_unlock(&someMutex);
 	    // pthread_mutex_lock(&someMutex);
 
-        unitsBought = getRandomNumber(5);
+        unitsBought = getRandomNumber(3);
         coffee = getRandomNumber(3);
 
         waitingTimeInLine = time(NULL) - arrivalTime;

@@ -285,7 +285,7 @@ int getRandomNumber(int maxNumber) {
 
     randomNumber = rand() % maxNumber+1;
 
-    printf("%d\n", randomNumber);
+    //printf("Número qualquer gerado aleatoriamente: %d\n", randomNumber);
 
     sleep(1);
 
