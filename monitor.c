@@ -13,8 +13,6 @@ void displayMenu()
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                      Lista de operacoes                     │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│        O comando é a primeira letra de cada operacao        │\n");
-    printf("├─────────────────────────────────────────────────────────────┤\n");
     printf("│(i)nit - inicializa a simulacao                              │\n");
     printf("│(m)enu - mostra o menu                                       │\n");
     printf("│(h)alt - pausa a simulacao                                   │\n");
@@ -376,7 +374,7 @@ void *getMonitorMessages(void *tid)
 
             }
 
-            else if (!strcmp(eventMessage, "GiveUpClient")) {
+            if (!strcmp(eventMessage, "GiveUpClient")) {
                 openForAppend();
 
              /* if (logFile != NULL) {
@@ -390,7 +388,7 @@ void *getMonitorMessages(void *tid)
 
             }
 
-            else if (!strcmp(eventMessage, "ChangedOrder")) {
+            if (!strcmp(eventMessage, "ChangedOrder")) {
                 openForAppend();
 
              /* if (logFile != NULL) {
@@ -403,7 +401,7 @@ void *getMonitorMessages(void *tid)
 
             }
 
-            else if (!strcmp(eventMessage, "AddEmployee")) {
+            if (!strcmp(eventMessage, "AddEmployee")) {
                 openForAppend();
 
 				/* if(logFile != NULL)
@@ -417,10 +415,9 @@ void *getMonitorMessages(void *tid)
 				{
 					maxEmployeesUsed = actualEmployeesUsedNow;
 				}
-				//Codificação: ADICIONAR_EMPREGADO HORAS ID
             }
 
-            else if (!strcmp(eventMessage, "RemoveEmployee")) {
+            if (!strcmp(eventMessage, "RemoveEmployee")) {
                 openForAppend();
 
              /* if (logFile != NULL) {
@@ -432,7 +429,7 @@ void *getMonitorMessages(void *tid)
                 actualEmployeesUsedNow--;
             }
 
-            else if (!strcmp(eventMessage, "AskForCoffee")) {
+            if (!strcmp(eventMessage, "AskForCoffee")) {
                 openForAppend();
 
              /* if (logFile != NULL) {
@@ -445,7 +442,7 @@ void *getMonitorMessages(void *tid)
 
             }
 
-            else if (!strcmp(eventMessage, "GiveCoffee")) {
+            if (!strcmp(eventMessage, "GiveCoffee")) {
                 openForAppend();
 
                 /* if (logFile != NULL) {
@@ -456,19 +453,19 @@ void *getMonitorMessages(void *tid)
 
             }
 
-            else if (!strcmp(eventMessage, "ReceiveCoffee")) {
+            if (!strcmp(eventMessage, "ReceiveCoffee")) {
                 openForAppend();
 
                 /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O cliente %d recebeu o café %d.\n", getTimeStamp(), someIntegerA, someIntegerB);
+                printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
                 clientsInLine--;
             }
 
-            else if (!strcmp(eventMessage, "RestockCoffee")) {
+            if (!strcmp(eventMessage, "RestockCoffee")) {
                 openForAppend();
 
                 /* if (logFile != NULL) {
