@@ -339,6 +339,7 @@ void *getMonitorMessages(void *tid)
     int someIntegerA = 0;
     int someIntegerB = 0;
     int someIntegerC = 0;
+    int someIntegerD = 0;
 
     while (1)
     {
@@ -358,7 +359,7 @@ void *getMonitorMessages(void *tid)
                 error = 1;
             }
 
-            sscanf(buffer, "%s %s %d %d %d", eventMessage, getTimeStamp(), &someIntegerA, &someIntegerB, &someIntegerC);
+            sscanf(buffer, "%s %s %d %d %d %d", eventMessage, getTimeStamp(), &someIntegerA, &someIntegerB, &someIntegerC, &someIntegerD);
 
             if (!strcmp(eventMessage, "AddClient")) {
                 openForAppend();
@@ -436,9 +437,10 @@ void *getMonitorMessages(void *tid)
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O cliente %d pediu pelo café.\n", getTimeStamp(), someIntegerA);
+                printf("%s - O cliente %d pediu pelo café.\n", getTimeStamp(), someIntegerA, someIntegerD);
 
-                // incrementa as vendas aqui ou não?
+                clientsInLine--;
+                avgTimeWaitingClientsInLine += someIntegerD;
 
             }
 
@@ -460,9 +462,21 @@ void *getMonitorMessages(void *tid)
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
+                printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC, someIntegerD);
 
-                clientsInLine--;
+                if (someIntegerC == 1) {
+                    timeToServeCoffeeA += someIntegerD;
+                    unitsSoldCoffeeA += someIntegerB;
+                }
+                else if (someIntegerC == 2) {
+                    timeToServeCoffeeB += someIntegerD;
+                    unitsSoldCoffeeB += someIntegerB;
+                }
+                else {
+                    timeToServeCoffeeC += someIntegerD;
+                    unitsSoldCoffeeC += someIntegerB;
+                }
+
             }
 
             if (!strcmp(eventMessage, "RestockCoffee")) {

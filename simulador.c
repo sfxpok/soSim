@@ -352,6 +352,8 @@ void *clientManager(void *tid)
 
     while(!simPause) {
 
+        printf("tou dentro do ciclo clientManager\n");
+
         sem_wait(&semQueueManager);
         pthread_mutex_lock(&someMutex);
 
@@ -401,6 +403,8 @@ void *employee(void *tid)
     char bufferMonitor[512];
 
     while (!simPause) {
+
+        printf("tou dentro do ciclo employee\n");
 
         sem_wait(&semRestock);
         pthread_mutex_lock(&someMutex);
@@ -459,21 +463,22 @@ void *client(void *tid)
     
     printf("### Cliente foi criado. (thread) ###\n");
 
-    char bufferMonitor[512];
+    char bufferMonitor[1024];
     int probabilityThreshold;
+    int id;
 
     time_t waitingTimeInLine;
 
     pthread_mutex_lock(&someMutex);
 
     int waitingTime = getRandomNumber(10);
-    idClient++;
+    id = idClient++;
     clientsInLine++;
 
     time_t arrivalTime = time(NULL);
 
-    printf("O cliente %d acabou de chegar às %s.\n", idClient, getTimeStamp());
-	sprintf(bufferMonitor, "ClientArrived %d %s", idClient, getTimeStamp());
+    printf("O cliente %d acabou de chegar às %s.\n", id, getTimeStamp());
+	sprintf(bufferMonitor, "ClientArrived %d %s", id, getTimeStamp());
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
 	pthread_mutex_unlock(&someMutex);
@@ -483,14 +488,16 @@ void *client(void *tid)
 
     clientsInLine--;
 
+    printf("antes de calcular prob de desistir\n");
+
     if ((time(NULL) - arrivalTime) > waitingTime) {
 
         probabilityThreshold = getRandomNumber(100);
 
         if (probabilityThreshold <= probWithdrawl) {
             
-            printf("O cliente %d desistiu às %s.\n", idClient, getTimeStamp());
-	        sprintf(bufferMonitor, "GiveUpClient %d %s", idClient, getTimeStamp());
+            printf("O cliente %d desistiu às %s.\n", id, getTimeStamp());
+	        sprintf(bufferMonitor, "GiveUpClient %d %s", id, getTimeStamp());
 	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
             sem_post(&semQueueManager);
@@ -502,16 +509,16 @@ void *client(void *tid)
 
     }
 
-        // pthread_mutex_unlock(&someMutex);
-	    // pthread_mutex_lock(&someMutex);
+        pthread_mutex_unlock(&someMutex);
+	    pthread_mutex_lock(&someMutex);
 
         unitsBought = getRandomNumber(3);
         coffee = getRandomNumber(3);
 
         waitingTimeInLine = time(NULL) - arrivalTime;
 
-        printf("O cliente %d pediu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
-	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+        printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
 	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         probabilityThreshold = getRandomNumber(100);
@@ -525,8 +532,8 @@ void *client(void *tid)
                 coffee = getRandomNumber(3);
             }
 
-            printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
-	        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+            printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+	        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
 	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
             
         }
@@ -585,8 +592,8 @@ void *client(void *tid)
 
     timeToServeClient = time(NULL) - waitingTimeInLine;
 
-    printf("O cliente %d recebeu %d unidades do café %d às %s.\n", idClient, unitsBought, coffee, getTimeStamp());
-	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s", idClient, unitsBought, coffee, getTimeStamp());
+    printf("O cliente %d recebeu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
     
     sem_post(&semQueueManager);
@@ -601,6 +608,8 @@ void threadsShop()
 
     pthread_t tClientManager;
     pthread_create(&tClientManager, NULL, &clientManager, NULL);
+
+    pthread_t tClient;
 
     pthread_t tEmployee;
     pthread_create(&tEmployee, NULL, employee, NULL);
@@ -637,28 +646,6 @@ void sleepingShop()
     //closeShop();
 }
 
-void shopRuntime()
-{
-
-    /*     while(isItOpen) {
-
-        openingTime = time(NULL);
-        closingTime = openingTime + timeCounter;
-
-        threadsShop();
-        sleepingShop();
-        closeShop();
-
-    } */
-
-    openingTime = time(NULL);
-    closingTime = openingTime + timeCounter;
-
-    threadsShop();
-    sleepingShop();
-    closeShop();
-}
-
 void simpleMessages()
 {
 
@@ -691,6 +678,8 @@ int randomNumberLoop()
 
 // copypasta
 
+//int runStore;
+
 void *pasta()
 {
     int n;
@@ -717,6 +706,7 @@ void *pasta()
                 printf("Simulação a correr...\n");
 
                 isItOpen = 1;
+                //runStore = 1;
                 if (simPause) {
                     simPause = 0;
                 }
@@ -741,48 +731,6 @@ void *pasta()
         }
     }
     close(sockfd);
-    return NULL;
-}
-
-void *recMSGClient(void *tid)
-{
-    int n;
-    char buffer[256];
-    //Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
-    while (1)
-    {
-        do
-        {
-            if ((n = recv(simSocket, buffer, sizeof(buffer), 0)) <= 0)
-            {
-
-                if (n < 0)
-                    perror("recv");
-                else
-                    printf("\nServer closed connection\n");
-                halt = 1;
-                exit(1);
-            }
-            else
-            {
-                buffer[n] = '\0';
-                if (!strcmp(buffer, "start\n"))
-                {
-                    printf("\nSimulacao iniciada\n\n");
-                    isItOpen = 1;
-                    //pausa = 0;
-                }
-                if (!strcmp(buffer, "pause\n"))
-                {
-                    printf("\nSimulacao parada\n\n");
-                    //pausa = 1;
-                    sprintf(buffer, "pause");
-                    send(simSocket, buffer, sizeof(buffer), 0);
-                }
-            }
-        } while (!halt);
-    }
-    close(simSocket);
     return NULL;
 }
 
@@ -894,12 +842,10 @@ void main()
 
     threadsShop();
 
-    pthread_t tClient;
-
     while(time(0) < closingTime) {
 
         while(simPause) {
-            //
+            sleep(1);
         }
 
         pthread_create(&tClient, NULL, client, NULL);
@@ -907,6 +853,6 @@ void main()
 
     }
 
-    //closeShop();
+    closeShop();
 
 }
