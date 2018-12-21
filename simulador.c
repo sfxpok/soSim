@@ -364,9 +364,10 @@ void *clientManager(void *tid)
         if(numberOfEmployeesToWork > actualEmployeesUsedNow) {
 
             actualEmployeesUsedNow = numberOfEmployeesToWork;
-            actualEmployeesUsedNow++;
+            //actualEmployeesUsedNow++;
 
             sem_post(&semEmployee);
+            sem_post(&semEmployee); // ???
 
             printf("O funcionário %d foi posto no serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
 
@@ -377,7 +378,7 @@ void *clientManager(void *tid)
         else if(numberOfEmployeesToWork < actualEmployeesUsedNow) {
             
             actualEmployeesUsedNow = numberOfEmployeesToWork;
-            actualEmployeesUsedNow--;
+            //actualEmployeesUsedNow--;
 
             printf("O funcionário %d deixou o serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
 

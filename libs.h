@@ -52,7 +52,6 @@ int avgTimeWaitingClientsInLine;
 int totalWithdrawls;
 int totalChangedOrder;
 int maxEmployeesUsed;
-int actualEmployeesUsedNow;
 int unitsSoldCoffeeA;
 int unitsSoldCoffeeB;
 int unitsSoldCoffeeC;
@@ -62,7 +61,7 @@ int avgTimeToServeCoffeeC;
 
 int maxClientsPerEmployee;
 
-int actualEmployeesUsedNow;
+int actualEmployeesUsedNow = 1;
 
 int unitsCoffeeA;
 int unitsCoffeeB;
