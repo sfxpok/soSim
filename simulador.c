@@ -68,6 +68,8 @@ void readConfig()
                 unitsCoffeeB = value;
             else if (strcmp(param, "unitsCoffeeC") == 0)
                 unitsCoffeeC = value;
+            else if (strcmp(param, "maxClientsPerEmployee") == 0)
+                maxClientsPerEmployee = value;
         }
 
         fclose(fileConfig);
@@ -357,7 +359,7 @@ void *clientManager(void *tid)
         sem_wait(&semQueueManager);
         pthread_mutex_lock(&someMutex);
 
-        numberOfEmployeesToWork = ((clientsInLine / maxClientsPerEmployee) + 1);
+        numberOfEmployeesToWork = (round(clientsInLine / maxClientsPerEmployee) + 1);
 
         if(numberOfEmployeesToWork > actualEmployeesUsedNow) {
 
@@ -518,7 +520,7 @@ void *client(void *tid)
         waitingTimeInLine = time(NULL) - arrivalTime;
 
         printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
-	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
+	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
 	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         probabilityThreshold = getRandomNumber(100);

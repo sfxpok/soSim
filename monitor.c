@@ -336,10 +336,12 @@ void *getMonitorMessages(void *tid)
     int sockfd = *((int *)tid);
     int error = 0;
     char eventMessage[20];
+    char buffer[1024];
     int someIntegerA = 0;
     int someIntegerB = 0;
     int someIntegerC = 0;
     int someIntegerD = 0;
+    int loop;
 
     while (1)
     {
@@ -358,7 +360,7 @@ void *getMonitorMessages(void *tid)
 
                 error = 1;
             }
-
+    
             sscanf(buffer, "%s %s %d %d %d %d", eventMessage, getTimeStamp(), &someIntegerA, &someIntegerB, &someIntegerC, &someIntegerD);
 
             if (!strcmp(eventMessage, "AddClient")) {

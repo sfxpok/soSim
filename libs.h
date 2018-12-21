@@ -17,6 +17,8 @@
 
 #include <stdbool.h>
 
+#include <math.h>
+
 // Macros
 
 #define UNIXSTR_PATH "/tmp/str_r"
