@@ -70,6 +70,8 @@ void readConfig()
                 unitsCoffeeC = value;
             else if (strcmp(param, "maxClientsPerEmployee") == 0)
                 maxClientsPerEmployee = value;
+            else if (strcmp(param, "stockWarehouse") == 0)
+                stockWarehouse = value;
         }
 
         fclose(fileConfig);
@@ -418,8 +420,8 @@ void *employee(void *tid)
 
             unitsCoffeeA = unitsCoffeeA + stockWarehouse;
 
-            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'A', getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 1, getTimeStamp());
+            sprintf(bufferMonitor, "RestockProduct %c %d %s", 1, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -430,8 +432,8 @@ void *employee(void *tid)
 
             unitsCoffeeB = unitsCoffeeB + stockWarehouse;
 
-            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'B', getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 2, getTimeStamp());
+            sprintf(bufferMonitor, "RestockProduct %d %d %s", 2, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -442,8 +444,8 @@ void *employee(void *tid)
 
             unitsCoffeeC = unitsCoffeeC + stockWarehouse;
 
-            printf("%d unidades do produto %c foram repostas às %s\n", stockWarehouse, 'C', getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %c %d %s", 'A', stockWarehouse, getTimeStamp());
+            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 3, getTimeStamp());
+            sprintf(bufferMonitor, "RestockProduct %d %d %s", 3, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
