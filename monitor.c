@@ -3,7 +3,7 @@
 void displayHeader()
 {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
-    printf("│                            Loja                             │\n");
+    printf("│                         Loja de café                        │\n");
     printf("│                Sistemas Operativos 2018/2019                │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
@@ -13,11 +13,11 @@ void displayMenu()
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                      Lista de operacoes                     │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│(i)nit - inicializa a simulacao                              │\n");
-    printf("│(m)enu - mostra o menu                                       │\n");
-    printf("│(h)alt - pausa a simulacao                                   │\n");
-    printf("│(s)tat - mostra as estatísticas da simulação                 │\n");
-    printf("│(q)uit - sai da simulacao                                    │\n");
+    printf("│init - inicializa a simulacao                                │\n");
+    printf("│menu - mostra o menu                                         │\n");
+    printf("│halt - pausa a simulacao                                     │\n");
+    printf("│stat - mostra as estatísticas da simulação                   │\n");
+    printf("│quit - sai da simulacao                                      │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
@@ -204,7 +204,7 @@ void askForInputString()
             displayMenu();
         }
 
-        if (!strcmp(operation, "stats\n")){
+        if (!strcmp(operation, "stat\n")){
             displayStats();
         }
 
@@ -361,10 +361,12 @@ void *getMonitorMessages(void *tid)
                 error = 1;
             }
     
-            sscanf(buffer, "%s %s %d %d %d %d", eventMessage, getTimeStamp(), &someIntegerA, &someIntegerB, &someIntegerC, &someIntegerD);
+            sscanf(buffer, "%s %d %d %d %d", eventMessage, &someIntegerA, &someIntegerB, &someIntegerC, &someIntegerD);
 
-            if (!strcmp(eventMessage, "AddClient")) {
-                openForAppend();
+            //printf("I_A: %d\n", someIntegerA);
+
+            if (!strcmp(eventMessage, "ClientArrived")) {
+                //openForAppend();
 
              /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
@@ -378,7 +380,7 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "GiveUpClient")) {
-                openForAppend();
+                //openForAppend();
 
              /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
@@ -392,7 +394,7 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "ChangedOrder")) {
-                openForAppend();
+                //openForAppend();
 
              /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
@@ -405,7 +407,7 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "AddEmployee")) {
-                openForAppend();
+                //openForAppend();
 
 				/* if(logFile != NULL)
 				{					
@@ -421,7 +423,7 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "RemoveEmployee")) {
-                openForAppend();
+                //openForAppend();
 
              /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
@@ -433,13 +435,13 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "AskForCoffee")) {
-                openForAppend();
+                //openForAppend();
 
              /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O cliente %d pediu pelo café.\n", getTimeStamp(), someIntegerA, someIntegerD);
+                printf("%s - O cliente %d pediu %d unidades do café %d.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
                 clientsInLine--;
                 avgTimeWaitingClientsInLine += someIntegerD;
@@ -447,7 +449,7 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "GiveCoffee")) {
-                openForAppend();
+                //openForAppend();
 
                 /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
@@ -458,13 +460,13 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "ReceiveCoffee")) {
-                openForAppend();
+                //openForAppend();
 
                 /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC, someIntegerD);
+                printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
                 if (someIntegerC == 1) {
                     timeToServeCoffeeA += someIntegerD;
@@ -482,13 +484,13 @@ void *getMonitorMessages(void *tid)
             }
 
             if (!strcmp(eventMessage, "RestockCoffee")) {
-                openForAppend();
+                //openForAppend();
 
                 /* if (logFile != NULL) {
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - O funcionário %d repôs o café %d.\n", getTimeStamp(), someIntegerA, someIntegerB);
+                printf("%s - %d unidades do produto %d foram repostas.\n", getTimeStamp(), someIntegerA, someIntegerB);
 
                 // tira os cafés do armazém?
 

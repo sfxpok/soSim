@@ -79,261 +79,12 @@ void readConfig()
     }
 }
 
-void createClient(int idClient)
-{
-
-    // printf("O cliente %d acabou de chegar.\n", idClient);
-    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
-    writeOutputToMonitor(messageToLog);
-    writeLogFiles(messageToLog);
-}
-
-void createEmployee(int idEmployee)
-{
-
-    // printf("O empregado %d chegou à loja.", idEmployee);
-    snprintf(messageToLog, sizeof(messageToLog), "O empregado %d chegou à loja.\n", idEmployee);
-    writeOutputToMonitor(messageToLog);
-    writeLogFiles(messageToLog);
-}
-
-void calculateRunningTimeShop()
-{
-
-    estatistica.durationOpen = (simulador.closingTime - simulador.openingTime) * 60;
-
-    snprintf(messageToLog, sizeof(messageToLog), "A loja está aberta durante %d minutos.\n", estatistica.durationOpen);
-    writeOutputToMonitor(messageToLog);
-    writeLogFiles(messageToLog);
-}
-
-void giveUpClient(int idClient)
-{
-
-    // printf("Cliente %d desistiu.\n", idClient);
-    snprintf(messageToLog, sizeof(messageToLog), "Cliente %d desistiu.\n", idClient);
-    writeOutputToMonitor(messageToLog);
-    writeLogFiles(messageToLog);
-}
-
-void askForCoffee(int idClient, char charCoffee)
-{
-
-    // printf("O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
-
-    switch (charCoffee)
-    {
-    case 'A':
-        // da-lhe Coffee A
-
-        if (simulador.unitsCoffeeA < 2)
-        {
-            // cliente espera
-        }
-
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
-        writeOutputToMonitor(messageToLog);
-        writeLogFiles(messageToLog);
-
-        break;
-    case 'B':
-        // da-lhe Coffee B
-
-        if (simulador.unitsCoffeeB < 2)
-        {
-            // cliente espera
-        }
-
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
-        writeOutputToMonitor(messageToLog);
-        writeLogFiles(messageToLog);
-
-        break;
-    case 'C':
-        // da-lhe Coffee C
-
-        if (simulador.unitsCoffeeC < 2)
-        {
-            // cliente espera
-        }
-
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu pela Coffee %c.\n", idClient, charCoffee);
-        writeOutputToMonitor(messageToLog);
-        writeLogFiles(messageToLog);
-
-        break;
-    }
-}
-
-void giveCoffeeToClient(int idClient, char charCoffee, int idEmployee)
-{
-    //
-}
-
-void changeOrder()
-{
-    //
-}
-
-void appendFinalReport()
-{
-    //
-}
-
-void restockCoffee(int idEmployee, char charCoffee)
-{
-
-    switch (charCoffee)
-    {
-    case 'a':
-        // repoe Coffee A
-        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
-        break;
-    case 'b':
-        // repoe Coffee B
-        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
-        break;
-    case 'c':
-        // repoe Coffee C
-        printf("O empregado %d repôs a Coffee %c.\n", idEmployee, charCoffee);
-        break;
-    }
-}
-
-void moveEmployeeToCashier(int idEmployee)
-{
-    //
-}
-
-void moveEmployeeToWarehouse(int idEmployee)
-{
-    //
-}
-
-void checkIfProductIsOutOfStock(char charCoffee)
-{
-    //
-}
-
 void initSimulation()
 {
     readConfig();
     cleanLogFile();
     openLogFile();
 }
-
-void *THREADCreateClient(void *tid)
-{
-
-    // printf("I reached the thread function\n");
-    printf("PID do cliente: %d\n", getpid());
-
-    createClient(3);
-
-    // return 0;
-}
-
-void *THREADCreateEmployee(void *tid)
-{
-
-    printf("PID do empregado: %d\n", getpid());
-
-    createEmployee(4);
-}
-
-void initThreads()
-{
-
-    // pthread_t tMessages;
-    // pthread_create(&tMessages, NULL, &messages, NULL);
-    // pthread_join(tMessages, NULL);
-
-    pthread_t tClient;
-    pthread_create(&tClient, NULL, &THREADCreateClient, NULL);
-    pthread_join(tClient, NULL);
-
-    pthread_t tEmployee;
-    pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
-    pthread_join(tEmployee, NULL);
-
-    pthread_t tFileManage;
-    // pthread_create(&tEmployee, NULL, &THREADCreateEmployee, NULL);
-    // pthread_join(tFileManage, NULL);
-
-    // printf("dd\n");
-}
-
-pthread_mutex_t msg;
-
-void sendMessages(int idEvent)
-{
-
-    //sprintf(messageToLog, "%d", idEvent);
-
-    pthread_mutex_lock(&msg);
-
-    // EDITA ISTO
-
-    if ((send(simSocket, messageToLog, strlen(messageToLog), 0)) < 0)
-    {
-        printf("Failed to send...\n");
-        //Retry sending
-        //send(sock, str, TAMANHO_MSG, 0);
-    }
-    else
-    {
-        send(simSocket, messageToLog, strlen(messageToLog), 0);
-        printf("Envio feito.\n");
-    }
-
-    pthread_mutex_unlock(&msg);
-}
-
-void initCommunication() {
-    //
-}
-
-/* int giveUp;
-int waitInLine;
-bool leaveStore = false;
-time_t arrivalTime;
-
-void *lifeOfClient()
-{
-
-    pthread_t threadClient = pthread_self();
-
-    sprintf(messageToLog, "O cliente (thread) %lu chegou.\n", threadClient);
-    printToScreen(logFile, messageToLog);
-
-    clientsInLine++;
-    arrivalTime = time(NULL);
-
-    waitInLine = getRandomNumber(10);
-    sem_wait(&semLoja);
-
-    while (!leaveStore)
-    {
-
-        giveUp = getRandomNumber(100);
-
-        if (giveUp < 50)
-        {
-            leaveStore = true;
-            //clientsInStore--;
-        }
-
-        waitInLine--;
-    }
-
-    clientsInLine--;
-    sem_post(&semLoja);
-
-    sprintf(messageToLog, "O cliente (thread) %lu vai sair da loja.", threadClient);
-    printToScreen(logFile, messageToLog);
-
-    return NULL;
-} */
 
 void closeSocket()
 {
@@ -346,7 +97,6 @@ Funcionamento do gestor de filas de clientes
 
 */
 
-pthread_mutex_t someMutex;
 int numberOfEmployeesToWork;
 
 void *clientManager(void *tid)
@@ -356,12 +106,12 @@ void *clientManager(void *tid)
 
     while(!simPause) {
 
-        printf("tou dentro do ciclo clientManager\n");
+        //printf("tou dentro do ciclo clientManager\n");
 
         sem_wait(&semQueueManager);
         pthread_mutex_lock(&someMutex);
 
-        numberOfEmployeesToWork = (round(clientsInLine / maxClientsPerEmployee) + 1);
+        numberOfEmployeesToWork = (round(clientsInLine / maxClientsPerEmployee) + 1); // floating point exception without round()
 
         if(numberOfEmployeesToWork > actualEmployeesUsedNow) {
 
@@ -369,9 +119,11 @@ void *clientManager(void *tid)
             //actualEmployeesUsedNow++;
 
             sem_post(&semEmployee);
-            sem_post(&semEmployee); // ???
+            sem_post(&semEmployee); // como é que isto funciona?
 
-            printf("O funcionário %d foi posto no serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
+            //printf("O funcionário %d foi posto no serviço às %s.\n", numberOfEmployeesToWork, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "O funcionário %d foi posto no serviço.\n", numberOfEmployeesToWork);
+            writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "AddEmployee %d %s", numberOfEmployeesToWork, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
@@ -382,7 +134,9 @@ void *clientManager(void *tid)
             actualEmployeesUsedNow = numberOfEmployeesToWork;
             //actualEmployeesUsedNow--;
 
-            printf("O funcionário %d deixou o serviço às %s\n", numberOfEmployeesToWork, getTimeStamp());
+            //printf("O funcionário %d deixou o serviço às %s.\n", numberOfEmployeesToWork, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "O funcionário %d deixou o serviço.\n", numberOfEmployeesToWork);
+            writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "RemoveEmployee %d %s", (numberOfEmployeesToWork+1), getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
@@ -390,6 +144,7 @@ void *clientManager(void *tid)
         }
         else {
             sem_post(&semEmployee);
+            //printf("PASSEI POR SEMPOST DO FUNCIONARIO DE ELSE.\n");
         }
 
         pthread_mutex_unlock(&someMutex);
@@ -409,7 +164,7 @@ void *employee(void *tid)
 
     while (!simPause) {
 
-        printf("tou dentro do ciclo employee\n");
+        //printf("tou dentro do ciclo employee\n");
 
         sem_wait(&semRestock);
         pthread_mutex_lock(&someMutex);
@@ -420,8 +175,11 @@ void *employee(void *tid)
 
             unitsCoffeeA = unitsCoffeeA + stockWarehouse;
 
-            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 1, getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %c %d %s", 1, stockWarehouse, getTimeStamp());
+            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 1, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 1);
+            writeLogFiles(messageToLog);
+
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 1, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -432,8 +190,11 @@ void *employee(void *tid)
 
             unitsCoffeeB = unitsCoffeeB + stockWarehouse;
 
-            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 2, getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %d %d %s", 2, stockWarehouse, getTimeStamp());
+            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 2, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 2);
+            writeLogFiles(messageToLog);
+
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 2, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -444,8 +205,11 @@ void *employee(void *tid)
 
             unitsCoffeeC = unitsCoffeeC + stockWarehouse;
 
-            printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 3, getTimeStamp());
-            sprintf(bufferMonitor, "RestockProduct %d %d %s", 3, stockWarehouse, getTimeStamp());
+            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 3, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 3);
+            writeLogFiles(messageToLog);
+
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 3, stockWarehouse, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -466,7 +230,7 @@ Funcionamento do cliente
 void *client(void *tid)
 {
     
-    printf("### Cliente foi criado. (thread) ###\n");
+    //printf("### Cliente foi criado. (thread) ###\n");
 
     char bufferMonitor[1024];
     int probabilityThreshold;
@@ -482,7 +246,12 @@ void *client(void *tid)
 
     time_t arrivalTime = time(NULL);
 
-    printf("O cliente %d acabou de chegar às %s.\n", id, getTimeStamp());
+    //printf("ID CLIENTE: %d\n", id);
+
+    //printf("O cliente %d acabou de chegar às %s.\n", id, getTimeStamp());
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", id);
+    writeLogFiles(messageToLog);
+
 	sprintf(bufferMonitor, "ClientArrived %d %s", id, getTimeStamp());
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
@@ -493,7 +262,7 @@ void *client(void *tid)
 
     clientsInLine--;
 
-    printf("antes de calcular prob de desistir\n");
+    //printf("antes de calcular prob de desistir\n");
 
     if ((time(NULL) - arrivalTime) > waitingTime) {
 
@@ -501,7 +270,10 @@ void *client(void *tid)
 
         if (probabilityThreshold <= probWithdrawl) {
             
-            printf("O cliente %d desistiu às %s.\n", id, getTimeStamp());
+            //printf("O cliente %d desistiu às %s.\n", id, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d desistiu.\n", id);
+            writeLogFiles(messageToLog);
+            
 	        sprintf(bufferMonitor, "GiveUpClient %d %s", id, getTimeStamp());
 	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
@@ -522,7 +294,10 @@ void *client(void *tid)
 
         waitingTimeInLine = time(NULL) - arrivalTime;
 
-        printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+        //printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu %d unidades do café %d.\n", id, unitsBought, coffee);
+        writeLogFiles(messageToLog);
+
 	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
 	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
@@ -537,7 +312,10 @@ void *client(void *tid)
                 coffee = getRandomNumber(3);
             }
 
-            printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+            //printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d alterou o seu pedido e pediu %d unidades do café %d.\n", id, unitsBought, coffee);
+            writeLogFiles(messageToLog);
+
 	        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
 	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
             
@@ -597,8 +375,11 @@ void *client(void *tid)
 
     timeToServeClient = time(NULL) - waitingTimeInLine;
 
-    printf("O cliente %d recebeu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
-	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
+    //printf("O cliente %d recebeu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d recebeu %d unidades do café %d.\n", id, unitsBought, coffee);
+    writeLogFiles(messageToLog);
+    
+	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
     
     sem_post(&semQueueManager);
@@ -649,36 +430,6 @@ void sleepingShop()
     }
 
     //closeShop();
-}
-
-void simpleMessages()
-{
-
-    sprintf(messageToLog, "clientIsHere %s", getTimeStamp());
-    send(simSocket, messageToLog, sizeof(messageToLog), 0);
-}
-
-//char buf[1000] = {0};
-
-void DEBUGcreateClient(int idClient)
-{
-
-    // printf("O cliente %d acabou de chegar.\n", idClient);
-    //snprintf(buf, 999, "O cliente %d acabou de chegar.\n", idClient);
-    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
-    printToScreen(logFile, messageToLog);
-    //snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", idClient);
-    // writeOutputToMonitor(messageToLog);
-    // writeLogFiles(messageToLog);
-}
-
-int randomNumberLoop()
-{
-
-    while (1)
-    {
-        getRandomNumber(25);
-    }
 }
 
 // copypasta

@@ -1,0 +1,29 @@
+18:15:17 O cliente 0 acabou de chegar.
+18:15:19 O cliente 0 pediu 3 unidades do café 1.
+18:15:21 O cliente 1 acabou de chegar.
+18:15:22 O cliente 2 acabou de chegar.
+18:15:23 O cliente 0 recebeu 3 unidades do café 1.
+18:15:25 O cliente 1 pediu 1 unidades do café 2.
+18:15:27 O cliente 3 acabou de chegar.
+18:15:28 O cliente 4 acabou de chegar.
+18:15:30 O cliente 5 acabou de chegar.
+18:15:30 O cliente 1 recebeu 1 unidades do café 2.
+18:15:30 O funcionário 2 foi posto no serviço.
+18:15:32 O cliente 3 pediu 2 unidades do café 1.
+18:15:36 O cliente 2 pediu 3 unidades do café 2.
+18:15:38 O cliente 6 acabou de chegar.
+18:15:39 O cliente 7 acabou de chegar.
+18:15:40 O cliente 8 acabou de chegar.
+18:15:40 O cliente 3 recebeu 3 unidades do café 2.
+18:15:41 O cliente 9 acabou de chegar.
+18:15:41 O cliente 2 recebeu 3 unidades do café 2.
+18:15:42 O cliente 10 acabou de chegar.
+18:15:45 O cliente 5 pediu 3 unidades do café 3.
+18:15:47 O cliente 11 acabou de chegar.
+18:15:50 O cliente 4 pediu 2 unidades do café 2.
+18:15:52 6 unidades do produto 1 foram repostas.
+18:15:53 O cliente 12 acabou de chegar.
+18:15:53 O cliente 5 recebeu 2 unidades do café 2.
+18:15:54 O cliente 13 acabou de chegar.
+18:15:55 O cliente 14 acabou de chegar.
+18:15:56 O cliente 15 acabou de chegar.

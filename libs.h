@@ -127,6 +127,7 @@ char operation[64];
 // Trincos
 
 pthread_mutex_t monitorFlag;
+pthread_mutex_t someMutex;
 
 // Semáforos
 
@@ -234,9 +235,13 @@ void cleanLogFile() {
 void writeLogFiles(char* writeToLog) {
 
     // openLogFile();
+    //pthread_mutex_lock(&someMutex);
 
     char *timeStamp = getTimeStamp();
+    printf("%s %s", timeStamp, writeToLog);
     fprintf(logFile, "%s %s", timeStamp, writeToLog);
+
+    //pthread_mutex_unlock(&someMutex);
 
     // closeFile(logFile);
 }
