@@ -61,6 +61,7 @@ int avgTimeToServeCoffeeC;
 
 int currentTime;
 int timeStartOfSimulation;
+int waitingTimeInLine;
 
 int maxClientsPerEmployee;
 

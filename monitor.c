@@ -28,6 +28,10 @@ void displayStats()
 
     // cuidado que esta função está incompleta
 
+    if((createdClients - clientsInLine) != 0) {
+        avgTimeWaitingClientsInLine = waitingTimeInLine / (createdClients - clientsInLine);
+    }
+
     if(unitsSoldCoffeeA != 0) {
         avgTimeToServeCoffeeA = timeToServeCoffeeA / unitsSoldCoffeeA;
     }
@@ -458,7 +462,7 @@ void *getMonitorMessages(void *tid)
                 printf("%s - O cliente %d pediu %d unidades do café %d.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
                 clientsInLine--;
-                avgTimeWaitingClientsInLine += someIntegerD;
+                waitingTimeInLine += someIntegerD;
 
             }
 

@@ -305,10 +305,12 @@ void *client(void *tid)
 
         if (probabilityThreshold <= probChangeOrder) {
             
+            printf("CHANGED ORDER.\n");
+
             int aux = coffee;
 
             while (aux == coffee) {
-                unitsBought = getRandomNumber(2);
+                unitsBought = getRandomNumber(3);
                 coffee = getRandomNumber(3);
             }
 
