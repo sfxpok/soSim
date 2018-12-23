@@ -59,6 +59,9 @@ int avgTimeToServeCoffeeA;
 int avgTimeToServeCoffeeB;
 int avgTimeToServeCoffeeC;
 
+int currentTime;
+int timeStartOfSimulation;
+
 int maxClientsPerEmployee;
 
 int actualEmployeesUsedNow = 1;

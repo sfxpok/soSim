@@ -179,7 +179,7 @@ void *employee(void *tid)
             snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 1);
             writeLogFiles(messageToLog);
 
-            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 1, stockWarehouse, getTimeStamp());
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 1, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -194,7 +194,7 @@ void *employee(void *tid)
             snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 2);
             writeLogFiles(messageToLog);
 
-            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 2, stockWarehouse, getTimeStamp());
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 2, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -209,7 +209,7 @@ void *employee(void *tid)
             snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 3);
             writeLogFiles(messageToLog);
 
-            sprintf(bufferMonitor, "RestockCoffee %d %d %s", 3, stockWarehouse, getTimeStamp());
+            sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 3, getTimeStamp());
             send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
         }
@@ -444,6 +444,9 @@ void *pasta()
     //Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
     while (1)
     {
+
+        //timeCounter++;
+
         if ((n = recv(sockfd, operation, sizeof(operation), 0)) > 0)
         {
             buffer[n] = '\0';

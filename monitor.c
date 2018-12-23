@@ -28,12 +28,26 @@ void displayStats()
 
     // cuidado que esta função está incompleta
 
+    if(unitsSoldCoffeeA != 0) {
+        avgTimeToServeCoffeeA = timeToServeCoffeeA / unitsSoldCoffeeA;
+    }
+
+    if(unitsSoldCoffeeB != 0) {
+        avgTimeToServeCoffeeB = timeToServeCoffeeB / unitsSoldCoffeeB;
+    }
+
+    if(unitsSoldCoffeeC != 0) {
+        avgTimeToServeCoffeeC = timeToServeCoffeeC / unitsSoldCoffeeC;
+    }
+
+    currentTime = time(NULL);
+
     printf("┌─────────────────────────────────────────────────────────────┐\n");
     printf("│                         Estatisticas                        │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
     printf("│ ### Geral ###                                               │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│Duração da simulação: %d                                     │\n", timeCounter);
+    printf("│Duração da simulação: %d                                     │\n", currentTime-timeStartOfSimulation);
     printf("├─────────────────────────────────────────────────────────────┤\n");
     printf("│ ### Clientes ###                                            │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
@@ -48,14 +62,14 @@ void displayStats()
     printf("│Empregados ao serviço no máximo: %d                          │\n", maxEmployeesUsed);
     printf("│Empregados ao serviço: %d                                    │\n", actualEmployeesUsedNow);
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│ ### Produtos ###                                            │\n");
+    printf("│ ### Cafés ###                                               │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
-    printf("│Vendas do produto 1: %d                                      │\n", unitsSoldCoffeeA);
-    printf("│Vendas do produto 2: %d                                      │\n", unitsSoldCoffeeB);
-    printf("│Vendas do produto 3: %d                                      │\n", unitsSoldCoffeeC);
-    printf("│Tempo médio de serviço do produto 1: %d                      │\n", avgTimeToServeCoffeeA);
-    printf("│Tempo médio de serviço do produto 2: %d                      │\n", avgTimeToServeCoffeeB);
-    printf("│Tempo médio de serviço do produto 3: %d                      │\n", avgTimeToServeCoffeeC);
+    printf("│Vendas do café 1: %d                                         │\n", unitsSoldCoffeeA);
+    printf("│Vendas do café 2: %d                                         │\n", unitsSoldCoffeeB);
+    printf("│Vendas do café 3: %d                                         │\n", unitsSoldCoffeeC);
+    printf("│Tempo médio de serviço do café 1: %d                         │\n", avgTimeToServeCoffeeA);
+    printf("│Tempo médio de serviço do café 2: %d                         │\n", avgTimeToServeCoffeeB);
+    printf("│Tempo médio de serviço do café 3: %d                         │\n", avgTimeToServeCoffeeC);
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
@@ -210,7 +224,7 @@ void askForInputString()
 
         if (!strcmp(operation, "init\n")) {
             sendMessageSocket();
-            //tempo_inicio_simulacao = time(NULL);
+            timeStartOfSimulation = time(NULL);
         }
 
         if (!strcmp(operation, "halt\n")) {
@@ -490,7 +504,7 @@ void *getMonitorMessages(void *tid)
                     fprintf(logFile, "%s - Cliente número %d chegou.\n", getTimeStamp(), someInteger);
                 } */
 
-                printf("%s - %d unidades do produto %d foram repostas.\n", getTimeStamp(), someIntegerA, someIntegerB);
+                printf("%s - %d unidades do café %d foram repostas.\n", getTimeStamp(), someIntegerA, someIntegerB);
 
                 // tira os cafés do armazém?
 
