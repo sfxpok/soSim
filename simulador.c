@@ -555,7 +555,6 @@ void startSemaphores() {
     sem_init(&semQueueManager, 0, 0);
     sem_init(&semRestock, 0, 0);
     sem_init(&semAvailableProduct, 0, 0);
-    sem_init(&semTest, 0, 1);
 
     printf("Semáforos inicializados.\n");
     
