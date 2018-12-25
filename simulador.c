@@ -135,7 +135,7 @@ void *clientManager(void *tid)
             //actualEmployeesUsedNow--;
 
             //printf("O funcionário %d deixou o serviço às %s.\n", numberOfEmployeesToWork, getTimeStamp());
-            snprintf(messageToLog, sizeof(messageToLog), "O funcionário %d deixou o serviço.\n", numberOfEmployeesToWork);
+            snprintf(messageToLog, sizeof(messageToLog), "O funcionário %d deixou o serviço.\n", numberOfEmployeesToWork+1);
             writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "RemoveEmployee %d %s", (numberOfEmployeesToWork+1), getTimeStamp());
@@ -175,8 +175,8 @@ void *employee(void *tid)
 
             unitsCoffeeA = unitsCoffeeA + stockWarehouse;
 
-            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 1, getTimeStamp());
-            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 1);
+            //printf("%d unidades do café %d foram repostas às %s\n", stockWarehouse, 1, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do café %d foram repostas.\n", stockWarehouse, 1);
             writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 1, getTimeStamp());
@@ -190,8 +190,8 @@ void *employee(void *tid)
 
             unitsCoffeeB = unitsCoffeeB + stockWarehouse;
 
-            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 2, getTimeStamp());
-            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 2);
+            //printf("%d unidades do café %d foram repostas às %s\n", stockWarehouse, 2, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do café %d foram repostas.\n", stockWarehouse, 2);
             writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 2, getTimeStamp());
@@ -205,8 +205,8 @@ void *employee(void *tid)
 
             unitsCoffeeC = unitsCoffeeC + stockWarehouse;
 
-            //printf("%d unidades do produto %d foram repostas às %s\n", stockWarehouse, 3, getTimeStamp());
-            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do produto %d foram repostas.\n", stockWarehouse, 3);
+            //printf("%d unidades do café %d foram repostas às %s\n", stockWarehouse, 3, getTimeStamp());
+            snprintf(messageToLog, sizeof(messageToLog), "%d unidades do café %d foram repostas.\n", stockWarehouse, 3);
             writeLogFiles(messageToLog);
 
             sprintf(bufferMonitor, "RestockCoffee %d %d %s", stockWarehouse, 3, getTimeStamp());
@@ -277,6 +277,8 @@ void *client(void *tid)
 	        sprintf(bufferMonitor, "GiveUpClient %d %s", id, getTimeStamp());
 	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
+            clientsLeftStore++;
+
             sem_post(&semQueueManager);
 			pthread_mutex_unlock(&someMutex);
 
@@ -286,94 +288,85 @@ void *client(void *tid)
 
     }
 
-        pthread_mutex_unlock(&someMutex);
-	    pthread_mutex_lock(&someMutex);
+    pthread_mutex_unlock(&someMutex);
+	pthread_mutex_lock(&someMutex);
 
-        unitsBought = getRandomNumber(3);
-        coffee = getRandomNumber(3);
+    unitsBought = getRandomNumber(3);
+    coffee = getRandomNumber(3);
 
-        waitingTimeInLine = time(NULL) - arrivalTime;
+    waitingTimeInLine = time(NULL) - arrivalTime;
 
-        //printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
-        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu %d unidades do café %d.\n", id, unitsBought, coffee);
+    //printf("O cliente %d pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+    snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu %d unidades do café %d.\n", id, unitsBought, coffee);
+    writeLogFiles(messageToLog);
+
+	sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
+	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+
+    probabilityThreshold = getRandomNumber(100);
+
+    if (probabilityThreshold <= probChangeOrder) {
+        
+        printf("CHANGED ORDER.\n");
+
+        int aux = coffee;
+
+        while (aux == coffee) {
+            unitsBought = getRandomNumber(3);
+            coffee = getRandomNumber(3);
+        }
+        //printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
+        snprintf(messageToLog, sizeof(messageToLog), "O cliente %d alterou o seu pedido e pediu %d unidades do café %d.\n", id, unitsBought, coffee);
         writeLogFiles(messageToLog);
-
-	    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
+        
+	    sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
 	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
-
-        probabilityThreshold = getRandomNumber(100);
-
-        if (probabilityThreshold <= probChangeOrder) {
-            
-            printf("CHANGED ORDER.\n");
-
-            int aux = coffee;
-
-            while (aux == coffee) {
-                unitsBought = getRandomNumber(3);
-                coffee = getRandomNumber(3);
+        
+    }
+    switch(coffee) {
+        case 1:
+            while (unitsCoffeeA <= 3) {
+                sem_post(&semRestock);
+                pthread_mutex_unlock(&someMutex);
+                sem_wait(&semAvailableProduct);
+                pthread_mutex_lock(&someMutex);
             }
+            pthread_mutex_unlock(&someMutex);
+            sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2);
+            pthread_mutex_lock(&someMutex);
 
-            //printf("O cliente %d alterou o seu pedido e pediu %d unidades do café %d às %s.\n", id, unitsBought, coffee, getTimeStamp());
-            snprintf(messageToLog, sizeof(messageToLog), "O cliente %d alterou o seu pedido e pediu %d unidades do café %d.\n", id, unitsBought, coffee);
-            writeLogFiles(messageToLog);
+            unitsCoffeeA = unitsCoffeeA - unitsBought;
 
-	        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
-	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
-            
-        }
-
-        switch(coffee) {
-
-            case 1:
-                while (unitsCoffeeA <= 3) {
-                    sem_post(&semRestock);
-                    pthread_mutex_unlock(&someMutex);
-                    sem_wait(&semAvailableProduct);
-                    pthread_mutex_lock(&someMutex);
-                }   
-
+            break;
+        case 2:
+            while (unitsCoffeeB <= 3) {
+                sem_post(&semRestock);
                 pthread_mutex_unlock(&someMutex);
-                sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2);
+                sem_wait(&semAvailableProduct);
                 pthread_mutex_lock(&someMutex);
+            }
+            pthread_mutex_unlock(&someMutex);
+            sleep(getRandomNumber(timeToServeCoffeeB) + timeToServeCoffeeB * 0.2);
+            pthread_mutex_lock(&someMutex);
 
-                unitsCoffeeA = unitsCoffeeA - unitsBought;
+            unitsCoffeeB = unitsCoffeeB - unitsBought;
 
-                break;
-
-            case 2:
-                while (unitsCoffeeB <= 3) {
-                    sem_post(&semRestock);
-                    pthread_mutex_unlock(&someMutex);
-                    sem_wait(&semAvailableProduct);
-                    pthread_mutex_lock(&someMutex);
-                }
-
+            break;
+        case 3:
+            while (unitsCoffeeC <= 3) {
+                sem_post(&semRestock);
                 pthread_mutex_unlock(&someMutex);
-                sleep(getRandomNumber(timeToServeCoffeeB) + timeToServeCoffeeB * 0.2);
+                sem_wait(&semAvailableProduct);
                 pthread_mutex_lock(&someMutex);
+            }
+            pthread_mutex_unlock(&someMutex);
+            sleep(getRandomNumber(timeToServeCoffeeC) + timeToServeCoffeeC * 0.2);
+            pthread_mutex_lock(&someMutex);
 
-                unitsCoffeeB = unitsCoffeeB - unitsBought;
+            unitsCoffeeC = unitsCoffeeC - unitsBought;
 
-                break;
-
-            case 3:
-                while (unitsCoffeeC <= 3) {
-                    sem_post(&semRestock);
-                    pthread_mutex_unlock(&someMutex);
-                    sem_wait(&semAvailableProduct);
-                    pthread_mutex_lock(&someMutex);
-                }
-
-                pthread_mutex_unlock(&someMutex);
-                sleep(getRandomNumber(timeToServeCoffeeC) + timeToServeCoffeeC * 0.2);
-                pthread_mutex_lock(&someMutex);
-
-                unitsCoffeeC = unitsCoffeeC - unitsBought;
-
-                break;                
-
-        }
+            break;                
+    }
 
     timeToServeClient = time(NULL) - waitingTimeInLine;
 
@@ -384,6 +377,8 @@ void *client(void *tid)
 	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
     
+    clientsLeftStore++;
+
     sem_post(&semQueueManager);
     pthread_mutex_unlock(&someMutex);
 
@@ -403,35 +398,26 @@ void threadsShop()
     pthread_create(&tEmployee, NULL, employee, NULL);
 }
 
-void closeShop()
+int closeShop()
 {
     printf("A loja está fechada, mas falta atender os clientes em fila.\n");
 
-    while (clientsInLine != 0)
+    //printf("Clientes em fila: %d\n", clientsInLine);
+    //printf("Clientes que já sairam da loja: %d\n", clientsLeftStore);
+
+    while ((clientsInLine - clientsLeftStore) != 0)
     {
-        printf("Já não existem clientes.\n");  // not sure...
+        // espera que os clientes todos saem da loja
     }
 
-    printf("Simulação term.\n");
+    printf("Já não existem clientes.\n");
+    printf("Fim da simulação.\n");
 
     isItOpen = 0;
+    //while(1);
     close(simSocket);
-}
 
-void sleepingShop()
-{
-
-    while (time(NULL) < closingTime)
-    {
-        while (!isItOpen){
-            // não faz nada pausado da simulação
-        }
-
-        pthread_create(&tClient, NULL, client, NULL);
-        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
-    }
-
-    //closeShop();
+    return 0;
 }
 
 // copypasta
@@ -597,16 +583,15 @@ void main()
 
     // inicialização de variáveis devido ao começo da simulação
 
-    timeCounter = 100;
     openingTime = time(0);
-    closingTime = openingTime + timeCounter;
+    closingTime = openingTime + durationOpen;
 
     threadsShop();
 
     while(time(0) < closingTime) {
 
         while(simPause) {
-            sleep(1);
+            //sleep(1);
         }
 
         pthread_create(&tClient, NULL, client, NULL);

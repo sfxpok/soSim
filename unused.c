@@ -276,3 +276,209 @@ int randomNumberLoop()
         getRandomNumber(25);
     }
 }
+
+void closeServerSocket()
+{
+    close(newsockfd);
+    close(sockfd);
+}
+
+void pastaCharAskForInput()
+{
+
+    do
+    {
+        printf("Escreve um comando: \n");
+        //fgets(op, sizeof(op), stdin);
+        scanf("\n%c", &op);
+
+        switch (op) {
+
+        case 'i':
+            // sendMessageSocket();
+
+            if (send(newsockfd, op, sizeof(op), 0) == -1)
+            {
+
+                printf("Falha de envio de mensagem no socket.\n");
+                return -1;
+            }
+
+            isItOpen = 1;
+            if (simPause)
+            {
+                simPause = 0;
+            }
+            break;
+
+        case 'h':
+            sendMessageSocket();
+            if (!simPause)
+            {
+                simPause = 1;
+            }
+            break;
+
+        case 'q':
+            sendMessageSocket();
+            isItOpen = 0;
+            closeShop();
+            break;
+
+        case 'm':
+            displayMenu();
+            break;
+
+        case 's':
+            displayStats();
+            break;
+        }
+    } while (op != 'q');
+}
+
+void closeShop()
+{
+    printf("O programa terminou.\n");
+
+    displayStats();
+
+    closeServerSocket();
+}
+
+void outputMenu()
+{
+    //
+}
+
+void pauseShop()
+{
+    //
+}
+
+void askForInput()
+{
+
+    printf("entrei no askforinput\n");
+
+    int halt = 0;
+
+    do
+    {
+
+        printf("Escreva um comando:\n");
+        scanf("%c", &op);
+
+        switch (op)
+        {
+
+        case 'i':
+            //initThreads();
+            break;
+
+        case 'h':
+            break;
+
+        case 'q': // to be fixed
+            halt = 1;
+            break;
+
+        case 'm':
+            displayMenu();
+            break;
+
+        case 's':
+            closeServerSocket();
+            halt = 1;
+            break;
+        }
+
+        // e preciso mudar a condicao do while para o op, eventualmente
+        // op = getchar();
+
+    } while (halt != 1);
+
+    printf("sai do askforinput\n");
+
+    //closeShop();
+}
+
+void pastaAskForInput()
+{
+    do
+    {
+        printf("Escreve um comando: \n");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (!strcmp(buffer, "menu\n"))
+            displayMenu();
+        if (!strcmp(buffer, "estatistica\n"))
+        {
+            //mostra_estatistica();
+            printf("stat\n");
+        }
+
+        if (!strcmp(buffer, "start\n"))
+        {
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+
+                printf("send\n");
+                exit(1);
+            }
+            //tempo_inicio_simulacao = time(NULL);
+            printf("start?\n");
+
+            if (simPause)
+            {
+                simPause = 0;
+            }
+        }
+        if (!strcmp(buffer, "pause\n"))
+        {
+            printf("Introduza o comando log para ver o registo da simulacao\n");
+            printf("Introduza o comando estatistica para ver as mesmas\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+
+            simPause = 1;
+        }
+
+        if (!strcmp(buffer, "abre\n"))
+        {
+            printf("hey do monitor - abre\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+        }
+
+        if (!strcmp(buffer, "dummy\n"))
+        {
+            printf("dummy command\n");
+
+            if (send(newsockfd, buffer, sizeof(buffer), 0) == -1)
+            {
+                exit(1);
+            }
+        }
+    } while (strcmp(buffer, "quit\n"));
+}
+
+void sleepingShop()
+{
+
+    while (time(NULL) < closingTime)
+    {
+        while (!isItOpen){
+            // não faz nada pausado da simulação
+        }
+
+        pthread_create(&tClient, NULL, client, NULL);
+        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
+    }
+
+    //closeShop();
+}

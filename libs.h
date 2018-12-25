@@ -67,6 +67,8 @@ int maxClientsPerEmployee;
 
 int actualEmployeesUsedNow = 1;
 
+int clientsLeftStore;
+
 int unitsCoffeeA;
 int unitsCoffeeB;
 int unitsCoffeeC;
