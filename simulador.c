@@ -1,5 +1,16 @@
 #include "libs.h"
 
+int checkBadConfigValues(int value) {
+
+    if (value < 0 || value > 100) {
+        printf("Existem parâmetros de configuração com valores inadequados. Altere o ficheiro de configuração.\n");
+        exit(1);
+    } else {
+        return 0;
+    }
+
+}
+
 void readConfig()
 {
 
@@ -37,6 +48,8 @@ void readConfig()
 
         while (fscanf(fileConfig, "%s %d\n", param, &value) != EOF)
         {
+
+            checkBadConfigValues(value);
 
             if (strcmp(param, "maxClients") == 0)
                 maxClients = value;
