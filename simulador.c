@@ -376,7 +376,7 @@ void *client(void *tid)
     
 	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
 	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
-    
+
     clientsLeftStore++;
 
     sem_post(&semQueueManager);
@@ -555,6 +555,7 @@ void startSemaphores() {
     sem_init(&semQueueManager, 0, 0);
     sem_init(&semRestock, 0, 0);
     sem_init(&semAvailableProduct, 0, 0);
+    sem_init(&semTest, 0, 1);
 
     printf("Semáforos inicializados.\n");
     

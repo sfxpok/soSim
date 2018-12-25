@@ -132,7 +132,6 @@ char operation[64];
 
 // Trincos
 
-pthread_mutex_t monitorFlag;
 pthread_mutex_t someMutex;
 
 // Semáforos
