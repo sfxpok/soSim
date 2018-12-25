@@ -1,13 +1,31 @@
-22:57:57 O cliente 0 acabou de chegar.
-22:57:59 O cliente 0 pediu 3 unidades do café 3.
-22:58:01 O cliente 1 acabou de chegar.
-22:58:03 O cliente 2 acabou de chegar.
-22:58:05 O cliente 3 acabou de chegar.
-22:58:05 O cliente 0 recebeu 3 unidades do café 3.
-22:58:07 O cliente 1 pediu 3 unidades do café 1.
-22:58:09 O cliente 4 acabou de chegar.
-22:58:10 O cliente 5 acabou de chegar.
-22:58:12 O cliente 6 acabou de chegar.
-22:58:12 O cliente 1 recebeu 3 unidades do café 1.
-22:58:12 O funcionário 2 foi posto no serviço.
-22:58:14 O cliente 2 pediu 3 unidades do café 3.
+23:20:36 O cliente 0 acabou de chegar.
+23:20:38 O cliente 0 pediu 3 unidades do café 3.
+23:20:40 O cliente 1 acabou de chegar.
+23:20:42 O cliente 2 acabou de chegar.
+23:20:45 O cliente 3 acabou de chegar.
+23:20:45 O cliente 0 recebeu 3 unidades do café 3.
+23:20:47 O cliente 1 pediu 1 unidades do café 2.
+23:20:49 O cliente 4 acabou de chegar.
+23:20:50 O cliente 5 acabou de chegar.
+23:20:52 O cliente 6 acabou de chegar.
+23:20:52 O cliente 1 recebeu 1 unidades do café 2.
+23:20:52 O funcionário 2 foi posto no serviço.
+23:20:55 O cliente 2 pediu 3 unidades do café 2.
+23:20:59 O cliente 3 pediu 2 unidades do café 2.
+23:21:01 O cliente 7 acabou de chegar.
+23:21:02 O cliente 8 acabou de chegar.
+23:21:02 O cliente 2 recebeu 3 unidades do café 2.
+23:21:03 O cliente 9 acabou de chegar.
+23:21:04 O cliente 10 acabou de chegar.
+23:21:07 O cliente 4 pediu 2 unidades do café 2.
+23:21:09 O cliente 11 acabou de chegar.
+23:21:09 O cliente 3 recebeu 2 unidades do café 2.
+23:21:12 O cliente 5 pediu 1 unidades do café 1.
+23:21:14 O cliente 12 acabou de chegar.
+23:21:15 6 unidades do café 2 foram repostas.
+23:21:16 O cliente 13 acabou de chegar.
+23:21:17 O cliente 14 acabou de chegar.
+23:21:17 O cliente 5 recebeu 1 unidades do café 1.
+23:21:17 O funcionário 3 foi posto no serviço.
+23:21:20 O cliente 6 pediu 2 unidades do café 1.
+23:21:21 O cliente 4 recebeu 2 unidades do café 2.

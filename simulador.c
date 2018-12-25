@@ -235,6 +235,9 @@ void *client(void *tid)
     char bufferMonitor[1024];
     int probabilityThreshold;
     int id;
+    int probWithdrawl;
+    int unitsBought;
+    int coffee;
 
     time_t waitingTimeInLine;
 

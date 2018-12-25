@@ -90,8 +90,8 @@ int halt;
 
 int simPause;
 
-int unitsBought;
-int coffee;
+//int unitsBought;
+//int coffee;
 
 int probChangeOrder;
 
