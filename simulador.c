@@ -28,18 +28,22 @@ void readConfig()
         printf("Erro ao abrir o ficheiro. O programa irá usar valores pré-definidos.");
 
         // Valores pré-definidos
-        maxClients = 3;
-        spawnedClients = 6;
-        avgTimeArrivalClients = 3;
+        //maxClients = 3;
+        //spawnedClients = 6;
+        //avgTimeArrivalClients = 3;
         timeToServeCoffeeA = 2;
         timeToServeCoffeeB = 3;
         timeToServeCoffeeC = 4;
         probWithdrawl = 2;
-        openingTime = 10;
-        closingTime = 13;
-        timeCounter = 0;
+        //openingTime = 10;
+        //closingTime = 13;
+        //timeCounter = 0;
         isItOpen = 0;
-        durationOpen = 0;
+        durationOpen = 30;
+        maxClientsPerEmployee = 3;
+        probChangeOrder = 10;
+        stockWarehouse = 5;
+
     }
 
     else
@@ -51,10 +55,8 @@ void readConfig()
 
             checkBadConfigValues(value);
 
-            if (strcmp(param, "maxClients") == 0)
-                maxClients = value;
-            else if (strcmp(param, "spawnedClients") == 0)
-                spawnedClients = value;
+            if (strcmp(param, "stockWarehouse") == 0)
+                stockWarehouse = value;
             else if (strcmp(param, "avgTimeArrivalClients") == 0)
                 avgTimeArrivalClients = value;
             else if (strcmp(param, "timeToServeCoffeeA") == 0)
@@ -67,12 +69,6 @@ void readConfig()
                 probWithdrawl = value;
             else if (strcmp(param, "probChangeOrder") == 0)
                 probChangeOrder = value;
-            else if (strcmp(param, "openingTime") == 0)
-                openingTime = value;
-            else if (strcmp(param, "closingTime") == 0)
-                closingTime = value;
-            else if (strcmp(param, "timeCounter") == 0)
-                timeCounter = value;
             else if (strcmp(param, "isItOpen") == 0)
                 isItOpen = value;
             else if (strcmp(param, "durationOpen") == 0)
@@ -85,8 +81,7 @@ void readConfig()
                 unitsCoffeeC = value;
             else if (strcmp(param, "maxClientsPerEmployee") == 0)
                 maxClientsPerEmployee = value;
-            else if (strcmp(param, "stockWarehouse") == 0)
-                stockWarehouse = value;
+
         }
 
         fclose(fileConfig);
@@ -280,16 +275,9 @@ void *client(void *tid)
 
     clientsInLine--;
 
-    //printf("antes de calcular prob de desistir\n");
-    printf("%ld\n", time(NULL) - arrivalTime);
-    printf("%d\n", waitingTime);
-
     if ((time(NULL) - arrivalTime) > waitingTime) {
 
         probabilityThreshold = getRandomNumber(100);
-
-        printf("threshold: %d\n", probabilityThreshold);
-        printf("prob withdr: %d\n", probWithdrawl);
 
         if (probabilityThreshold <= probWithdrawl) {
             
@@ -405,6 +393,7 @@ void *client(void *tid)
     sem_post(&semQueueManager);
     pthread_mutex_unlock(&someMutex);
 
+    pthread_exit(tid);
     return 0;
 
 }
@@ -437,10 +426,11 @@ int closeShop()
     printf("Fim da simulação.\n");
 
     isItOpen = 0;
+    canWriteStats = 1;
     //while(1);
-    close(simSocket);
+    //close(simSocket);
 
-    return 0;
+    exit(0);
 }
 
 // copypasta

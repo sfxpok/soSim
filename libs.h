@@ -59,6 +59,8 @@ int avgTimeToServeCoffeeA;
 int avgTimeToServeCoffeeB;
 int avgTimeToServeCoffeeC;
 
+int canWriteStats;
+
 int closingSimulation;
 
 int currentTime;
