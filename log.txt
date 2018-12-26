@@ -1,4 +1,4 @@
-16:37:08 O cliente 0 acabou de chegar.
-16:37:10 O cliente 0 pediu 2 unidades do café 1.
-16:37:12 O cliente 1 acabou de chegar.
-16:37:14 O cliente 0 recebeu 2 unidades do café 1.
+16:44:40 O cliente 0 acabou de chegar.
+16:44:42 O cliente 0 pediu 2 unidades do café 3.
+16:44:44 O cliente 1 acabou de chegar.
+16:44:48 O cliente 0 recebeu 2 unidades do café 3.

@@ -404,7 +404,7 @@ void threadsShop()
     pthread_t tClientManager;
     pthread_create(&tClientManager, NULL, &clientManager, NULL);
 
-    pthread_t tClient;
+    //pthread_t tClient;
 
     pthread_t tEmployee;
     pthread_create(&tEmployee, NULL, employee, NULL);
