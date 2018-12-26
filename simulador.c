@@ -65,6 +65,8 @@ void readConfig()
                 timeToServeCoffeeC = value;
             else if (strcmp(param, "probWithdrawl") == 0)
                 probWithdrawl = value;
+            else if (strcmp(param, "probChangeOrder") == 0)
+                probChangeOrder = value;
             else if (strcmp(param, "openingTime") == 0)
                 openingTime = value;
             else if (strcmp(param, "closingTime") == 0)
@@ -117,7 +119,7 @@ void *clientManager(void *tid)
 
     char bufferMonitor[512];
 
-    while(!simPause) {
+    while(isItOpen) {
 
         //printf("tou dentro do ciclo clientManager\n");
 
@@ -175,7 +177,7 @@ void *employee(void *tid)
 {
     char bufferMonitor[512];
 
-    while (!simPause) {
+    while (isItOpen) {
 
         //printf("tou dentro do ciclo employee\n");
 
@@ -248,7 +250,7 @@ void *client(void *tid)
     char bufferMonitor[1024];
     int probabilityThreshold;
     int id;
-    int probWithdrawl;
+    //int probWithdrawl;
     int unitsBought;
     int coffee;
 
@@ -256,7 +258,7 @@ void *client(void *tid)
 
     pthread_mutex_lock(&someMutex);
 
-    int waitingTime = getRandomNumber(10);
+    int waitingTime = getRandomNumber(5);
     id = idClient++;
     clientsInLine++;
 
@@ -279,10 +281,15 @@ void *client(void *tid)
     clientsInLine--;
 
     //printf("antes de calcular prob de desistir\n");
+    printf("%ld\n", time(NULL) - arrivalTime);
+    printf("%d\n", waitingTime);
 
     if ((time(NULL) - arrivalTime) > waitingTime) {
 
         probabilityThreshold = getRandomNumber(100);
+
+        printf("threshold: %d\n", probabilityThreshold);
+        printf("prob withdr: %d\n", probWithdrawl);
 
         if (probabilityThreshold <= probWithdrawl) {
             
@@ -323,7 +330,7 @@ void *client(void *tid)
 
     if (probabilityThreshold <= probChangeOrder) {
         
-        printf("CHANGED ORDER.\n");
+        //printf("CHANGED ORDER.\n");
 
         int aux = coffee;
 

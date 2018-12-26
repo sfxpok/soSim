@@ -59,6 +59,8 @@ int avgTimeToServeCoffeeA;
 int avgTimeToServeCoffeeB;
 int avgTimeToServeCoffeeC;
 
+int closingSimulation;
+
 int currentTime;
 int timeStartOfSimulation;
 int waitingTimeInLine;
