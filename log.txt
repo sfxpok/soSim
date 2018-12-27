@@ -1,90 +1,48 @@
-18:29:42 O cliente 0 acabou de chegar.
-18:29:44 O cliente 0 pediu 3 unidades do café 1.
-18:29:46 O cliente 1 acabou de chegar.
-18:29:47 O cliente 2 acabou de chegar.
-18:29:48 O cliente 3 acabou de chegar.
-18:29:49 O cliente 4 acabou de chegar.
-18:29:50 O cliente 5 acabou de chegar.
-18:29:51 O cliente 6 acabou de chegar.
-18:29:51 O cliente 0 recebeu 3 unidades do café 1.
-18:29:52 O cliente 7 acabou de chegar.
-18:29:53 O cliente 8 acabou de chegar.
-18:29:54 O cliente 9 acabou de chegar.
-18:29:55 O cliente 10 acabou de chegar.
-18:29:55 O funcionário 3 foi posto no serviço.
-18:29:56 O cliente 11 acabou de chegar.
-18:29:57 O cliente 12 acabou de chegar.
-18:29:58 O cliente 13 acabou de chegar.
-18:29:59 O cliente 14 acabou de chegar.
-18:30:00 O cliente 1 desistiu.
-18:30:00 O funcionário 4 foi posto no serviço.
-18:30:03 O cliente 2 pediu 2 unidades do café 1.
-18:30:05 O cliente 15 acabou de chegar.
-18:30:06 O cliente 16 acabou de chegar.
-18:30:07 O cliente 17 acabou de chegar.
-18:30:08 O cliente 3 desistiu.
-18:30:11 O cliente 4 pediu 2 unidades do café 3.
-18:30:13 O cliente 18 acabou de chegar.
-18:30:14 O cliente 19 acabou de chegar.
-18:30:15 O cliente 20 acabou de chegar.
-18:30:16 O cliente 21 acabou de chegar.
-18:30:17 O cliente 22 acabou de chegar.
-18:30:18 O cliente 23 acabou de chegar.
-18:30:19 O cliente 24 acabou de chegar.
-18:30:19 O cliente 2 recebeu 2 unidades do café 1.
-18:30:19 O funcionário 6 foi posto no serviço.
-18:30:20 O cliente 6 desistiu.
-18:30:21 O cliente 5 desistiu.
-18:30:22 O cliente 25 acabou de chegar.
-18:30:23 O cliente 26 acabou de chegar.
-18:30:24 O cliente 27 acabou de chegar.
-18:30:24 O cliente 4 recebeu 2 unidades do café 3.
-18:30:25 O cliente 28 acabou de chegar.
-18:30:28 O cliente 7 pediu 3 unidades do café 1.
-18:30:31 O cliente 7 alterou o seu pedido e pediu 1 unidades do café 3.
-18:30:32 O cliente 8 desistiu.
-18:30:35 O cliente 9 pediu 3 unidades do café 2.
-18:30:37 O cliente 10 desistiu.
-18:30:37 O funcionário 6 deixou o serviço.
-18:30:40 O cliente 11 pediu 2 unidades do café 3.
-18:30:45 O cliente 11 alterou o seu pedido e pediu 3 unidades do café 1.
-18:30:46 6 unidades do café 1 foram repostas.
-18:30:46 O cliente 9 recebeu 3 unidades do café 2.
-18:30:47 O cliente 12 desistiu.
-18:30:48 O cliente 13 desistiu.
-18:30:48 O funcionário 5 deixou o serviço.
-18:30:49 O cliente 29 acabou de chegar.
-18:30:49 O cliente 7 recebeu 1 unidades do café 3.
-18:30:49 O funcionário 5 foi posto no serviço.
-18:30:52 O cliente 15 pediu 2 unidades do café 2.
-18:30:57 O cliente 15 alterou o seu pedido e pediu 2 unidades do café 1.
-18:30:58 O cliente 14 desistiu.
-┌─────────────────────────────────────────────────────────────┐
-│                         Estatisticas                        │
-├─────────────────────────────────────────────────────────────┤
-│ ### Geral ###                                               │
-├─────────────────────────────────────────────────────────────┤
-│Duração da simulação: 0                                     │
-├─────────────────────────────────────────────────────────────┤
-│ ### Clientes ###                                            │
-├─────────────────────────────────────────────────────────────┤
-│Clientes criados na simulação: 0                            │
-│Clientes à espera na fila: 14                                │
-│Tempo médio de espera em fila: 0                            │
-│Clientes que mudaram o seu pedido: 0                        │
-│Clientes que desistiram: 0                                  │
-├─────────────────────────────────────────────────────────────┤
-│ ### Empregados ###                                          │
-├─────────────────────────────────────────────────────────────┤
-│Empregados ao serviço no máximo: 0                          │
-│Empregados ao serviço: 5                                    │
-├─────────────────────────────────────────────────────────────┤
-│ ### Cafés ###                                               │
-├─────────────────────────────────────────────────────────────┤
-│Vendas do café 1: 0                                         │
-│Vendas do café 2: 0                                         │
-│Vendas do café 3: 0                                         │
-│Tempo médio de serviço do café 1: 0                         │
-│Tempo médio de serviço do café 2: 0                         │
-│Tempo médio de serviço do café 3: 0                         │
-├─────────────────────────────────────────────────────────────┤
+19:53:51 O cliente 0 acabou de chegar.
+19:53:53 O cliente 0 pediu 2 unidades do café 3.
+19:54:04 O cliente 0 alterou o seu pedido e pediu 1 unidades do café 1.
+19:54:05 O cliente 1 acabou de chegar.
+19:54:06 O cliente 2 acabou de chegar.
+19:54:07 O cliente 3 acabou de chegar.
+19:54:08 O cliente 4 acabou de chegar.
+19:54:09 O cliente 5 acabou de chegar.
+19:54:10 O cliente 6 acabou de chegar.
+19:54:11 O cliente 7 acabou de chegar.
+19:54:12 O cliente 8 acabou de chegar.
+19:54:13 O cliente 9 acabou de chegar.
+19:54:14 O cliente 10 acabou de chegar.
+19:54:15 O cliente 11 acabou de chegar.
+19:54:16 O cliente 12 acabou de chegar.
+19:54:17 O cliente 13 acabou de chegar.
+19:54:18 O cliente 14 acabou de chegar.
+19:54:19 O cliente 15 acabou de chegar.
+19:54:19 O cliente 0 recebeu 1 unidades do café 1.
+19:54:20 O cliente 16 acabou de chegar.
+19:54:21 O cliente 17 acabou de chegar.
+19:54:22 O cliente 18 acabou de chegar.
+19:54:23 O cliente 19 acabou de chegar.
+19:54:24 O cliente 20 acabou de chegar.
+19:54:25 O cliente 21 acabou de chegar.
+19:54:26 O cliente 22 acabou de chegar.
+19:54:27 O cliente 23 acabou de chegar.
+19:54:28 O cliente 24 acabou de chegar.
+19:54:29 O cliente 25 acabou de chegar.
+19:54:30 O cliente 26 acabou de chegar.
+19:54:31 O cliente 27 acabou de chegar.
+19:54:32 O cliente 28 acabou de chegar.
+19:54:33 O cliente 29 acabou de chegar.
+19:54:33 O funcionário 8 foi posto no serviço.
+19:54:36 O cliente 1 pediu 1 unidades do café 3.
+19:54:40 O cliente 2 pediu 3 unidades do café 3.
+19:54:43 O cliente 2 alterou o seu pedido e pediu 1 unidades do café 2.
+19:54:43 O cliente 1 recebeu 1 unidades do café 3.
+19:54:43 O funcionário 8 deixou o serviço.
+19:54:45 O cliente 2 recebeu 1 unidades do café 2.
+19:54:48 O cliente 3 pediu 2 unidades do café 3.
+19:54:51 O cliente 3 recebeu 2 unidades do café 3.
+19:54:52 O cliente 4 desistiu.
+19:54:55 O cliente 5 pediu 3 unidades do café 3.
+19:54:58 O cliente 5 alterou o seu pedido e pediu 2 unidades do café 1.
+19:55:00 O cliente 5 recebeu 2 unidades do café 1.
+19:55:01 O cliente 6 desistiu.
+19:55:01 O funcionário 7 deixou o serviço.

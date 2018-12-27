@@ -122,6 +122,7 @@ pthread_mutex_t someMutex;
 
 // Threads
 
+//pthread_t tClient[1024];
 pthread_t tClient;
 
 // Semáforos

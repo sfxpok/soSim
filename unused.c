@@ -482,3 +482,39 @@ void sleepingShop()
 
     //closeShop();
 }
+
+int simLength;
+int simSocketConnection;
+
+int startSimulatorClientSocket()
+{
+
+    // create a socket
+
+    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    {
+        printf("Não foi possível criar a socket.\n");
+        return -1;
+    }
+
+    printf("Socket foi criada.\n");
+
+    // specify an address for the socket
+    //struct sockaddr_in simSocketAddress;
+    bzero((char *)&simSocketAddress, sizeof(simSocketAddress));
+    simSocketAddress.sun_family = AF_UNIX;
+    //simSocketAddress.sun_port = htons(PORT);
+    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
+    //simSocketAddress.sun_addr.s_addr = INADDR_ANY;
+    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
+
+    if (connect(simSocket, (struct sockaddr *)&simSocketAddress, simLength) < 0)
+    {
+        printf("Conexão falhada.\n");
+        return -1;
+    }
+
+    printf("Conexão feita.\n");
+
+    return 0;
+}

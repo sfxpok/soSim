@@ -1,5 +1,15 @@
 #include "libs.h"
 
+/*
+
+    function: checkBadConfigValues
+
+    value: valor de um parâmetro de configuração
+
+    Não permite que hajam parâmetros de configuração que causem o mau funcionamento do programa.
+
+*/
+
 int checkBadConfigValues(int value) {
 
     if (value < 0 || value > 100) {
@@ -11,12 +21,17 @@ int checkBadConfigValues(int value) {
 
 }
 
+/*
+
+    function: readConfig
+
+    Lê parâmetros de configuração do ficheiro "config.conf". Caso o "config.conf" não exista, usamos
+    valores pré-definidos dentro do código.
+
+*/
+
 void readConfig()
 {
-
-    // Adiciona uma excepção qualquer para valores disparatados no parâmetros
-    // Como é que verifico se o ficheiro de configuração não está direito?
-    // Talvez deixa o utilizador definir parâmetros caso não haja ficheiro de configuração?
 
     FILE *fileConfig = fopen("config.conf", "r");
 
@@ -89,6 +104,15 @@ void readConfig()
     }
 }
 
+/*
+
+    function: initSimulation
+
+    Apenas acede funções que lêem o ficheiro de configuração, apaga o conteúdo do ficheiro de registo
+    e abre a stream para podermos escrever no ficheiro de registo.
+
+*/
+
 void initSimulation()
 {
     readConfig();
@@ -96,14 +120,13 @@ void initSimulation()
     openLogFile();
 }
 
-void closeSocket()
-{
-    close(simSocket);
-}
-
 /*
 
-Funcionamento do gestor de filas de clientes
+    function: *clientManager
+
+    *tid: ID do thread que acede esta função
+
+    Função que desempenha o papel de gestor de filas.
 
 */
 
@@ -112,16 +135,17 @@ int numberOfEmployeesToWork;
 void *clientManager(void *tid)
 {
 
-    char bufferMonitor[512];
+    char bufferMonitor[512]; // buffer para transmitir mensagem do simulador para o monitor
 
-    while(isItOpen) {
+    while(isItOpen) { // o gestor de filas trabalha enquanto que a loja tiver aberta
 
         //printf("tou dentro do ciclo clientManager\n");
 
-        sem_wait(&semQueueManager);
+        sem_wait(&semQueueManager); // vai decidir quantos funcionários vão estar no serviço
         pthread_mutex_lock(&someMutex);
 
-        numberOfEmployeesToWork = (round(clientsInLine / maxClientsPerEmployee) + 1); // floating point exception without round()
+        // fórmula para calcular quantos funcionários deviam tar em serviço
+        numberOfEmployeesToWork = (round(clientsInLine / maxClientsPerEmployee) + 1);
 
         if(numberOfEmployeesToWork > actualEmployeesUsedNow) {
 
@@ -129,7 +153,7 @@ void *clientManager(void *tid)
             //actualEmployeesUsedNow++;
 
             sem_post(&semEmployee);
-            sem_post(&semEmployee); // como é que isto funciona?
+            sem_post(&semEmployee); // como é que isto funciona? pensei que só fosse preciso assinalar uma vez...
 
             //printf("O funcionário %d foi posto no serviço às %s.\n", numberOfEmployeesToWork, getTimeStamp());
             snprintf(messageToLog, sizeof(messageToLog), "O funcionário %d foi posto no serviço.\n", numberOfEmployeesToWork);
@@ -153,8 +177,7 @@ void *clientManager(void *tid)
 
         }
         else {
-            sem_post(&semEmployee);
-            //printf("PASSEI POR SEMPOST DO FUNCIONARIO DE ELSE.\n");
+            sem_post(&semEmployee); // ?
         }
 
         pthread_mutex_unlock(&someMutex);
@@ -164,19 +187,23 @@ void *clientManager(void *tid)
 
 /*
 
-Funcionamento do empregado
+    function: *employee
+
+    *tid: ID do thread que acede esta função
+
+    Função que desempenha o papel de funcionário.
 
 */
 
 void *employee(void *tid)
 {
-    char bufferMonitor[512];
+    char bufferMonitor[512]; // buffer para transmitir mensagem do simulador para o monitor
 
-    while (isItOpen) {
+    while (isItOpen) { // o gestor de filas trabalha enquanto que a loja tiver aberta
 
         //printf("tou dentro do ciclo employee\n");
 
-        sem_wait(&semRestock);
+        sem_wait(&semRestock); // vai fazer restock de algum café
         pthread_mutex_lock(&someMutex);
 
         if (unitsCoffeeA <= 3) {
@@ -225,7 +252,7 @@ void *employee(void *tid)
         }
 
         pthread_mutex_unlock(&someMutex);
-        sem_post(&semAvailableProduct);
+        sem_post(&semAvailableProduct); // é para avisar que o funcionário pode voltar à caixa e servir o café ao cliente
 
     }
 
@@ -233,7 +260,11 @@ void *employee(void *tid)
 
 /*
 
-Funcionamento do cliente
+    function: *client
+
+    *tid: ID do thread que acede esta função
+
+    Função que desempenha o papel de cliente.
 
 */
 
@@ -242,22 +273,22 @@ void *client(void *tid)
     
     //printf("### Cliente foi criado. (thread) ###\n");
 
-    char bufferMonitor[1024];
-    int probabilityThreshold;
-    int id;
+    char bufferMonitor[1024]; // buffer para transmitir mensagem do simulador para o monitor
+    int probabilityThreshold; // apenas serve para gerar números de 0 a 100, ver mais abaixo
+    int id; // ID do cliente
     //int probWithdrawl;
-    int unitsBought;
-    int coffee;
+    int unitsBought; // unidades a comprar
+    int coffee; // qual é o café
 
-    time_t waitingTimeInLine;
+    time_t waitingTimeInLine; // tempo de espera na fila
 
     pthread_mutex_lock(&someMutex);
 
-    int waitingTime = getRandomNumber(5);
+    int waitingTime = getRandomNumber(5); // tempo de espera que é usado para decidir se vai ficar em risco de querer desistir
     id = idClient++;
     clientsInLine++;
 
-    time_t arrivalTime = time(NULL);
+    time_t arrivalTime = time(NULL); // tempo em que chegou à loja
 
     //printf("ID CLIENTE: %d\n", id);
 
@@ -271,16 +302,16 @@ void *client(void *tid)
 
 	pthread_mutex_unlock(&someMutex);
 
-    sem_wait(&semEmployee);
+    sem_wait(&semEmployee); // há um funcionário que vai atender um cliente, logo o semáforo decrementa
     pthread_mutex_lock(&someMutex);
 
     clientsInLine--;
 
-    if ((time(NULL) - arrivalTime) > waitingTime) {
+    if ((time(NULL) - arrivalTime) > waitingTime) { // o cliente esperou muito?
 
         probabilityThreshold = getRandomNumber(100);
 
-        if (probabilityThreshold <= probWithdrawl) {
+        if (probabilityThreshold <= probWithdrawl) { // a probabilidade de desistir da fila é maior que o número aleatório criado?
             
             //printf("O cliente %d desistiu às %s.\n", id, getTimeStamp());
             snprintf(messageToLog, sizeof(messageToLog), "O cliente %d desistiu.\n", id);
@@ -294,7 +325,7 @@ void *client(void *tid)
             sem_post(&semQueueManager);
 			pthread_mutex_unlock(&someMutex);
 
-            return NULL;
+            return NULL; // cliente desistiu...
 
         }
 
@@ -303,8 +334,8 @@ void *client(void *tid)
     pthread_mutex_unlock(&someMutex);
 	pthread_mutex_lock(&someMutex);
 
-    unitsBought = getRandomNumber(3);
-    coffee = getRandomNumber(3);
+    unitsBought = getRandomNumber(3); // quantas unidades é que o cliente vai comprar?
+    coffee = getRandomNumber(3); // qual é o café que o cliente vai comprar?
 
     waitingTimeInLine = time(NULL) - arrivalTime;
 
@@ -317,13 +348,13 @@ void *client(void *tid)
 
     probabilityThreshold = getRandomNumber(100);
 
-    if (probabilityThreshold <= probChangeOrder) {
+    if (probabilityThreshold <= probChangeOrder) {  // a probabilidade de trocar de pedido é maior que o número aleatório criado?
         
         //printf("CHANGED ORDER.\n");
 
         int aux = coffee;
 
-        while (aux == coffee) {
+        while (aux == coffee) { // tenta obter um café diferente
             unitsBought = getRandomNumber(3);
             coffee = getRandomNumber(3);
         }
@@ -335,16 +366,17 @@ void *client(void *tid)
 	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
         
     }
+
     switch(coffee) {
         case 1:
             while (unitsCoffeeA <= 3) {
-                sem_post(&semRestock);
+                sem_post(&semRestock); // vai fazer restock do café
                 pthread_mutex_unlock(&someMutex);
-                sem_wait(&semAvailableProduct);
+                sem_wait(&semAvailableProduct); // já tamos café com stock?
                 pthread_mutex_lock(&someMutex);
             }
             pthread_mutex_unlock(&someMutex);
-            sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2);
+            sleep(getRandomNumber(timeToServeCoffeeA) + timeToServeCoffeeA * 0.2); // tá a servir o café...
             pthread_mutex_lock(&someMutex);
 
             unitsCoffeeA = unitsCoffeeA - unitsBought;
@@ -352,13 +384,13 @@ void *client(void *tid)
             break;
         case 2:
             while (unitsCoffeeB <= 3) {
-                sem_post(&semRestock);
+                sem_post(&semRestock); // vai fazer restock do café
                 pthread_mutex_unlock(&someMutex);
-                sem_wait(&semAvailableProduct);
+                sem_wait(&semAvailableProduct); // já tamos café com stock?
                 pthread_mutex_lock(&someMutex);
             }
             pthread_mutex_unlock(&someMutex);
-            sleep(getRandomNumber(timeToServeCoffeeB) + timeToServeCoffeeB * 0.2);
+            sleep(getRandomNumber(timeToServeCoffeeB) + timeToServeCoffeeB * 0.2); // tá a servir o café...
             pthread_mutex_lock(&someMutex);
 
             unitsCoffeeB = unitsCoffeeB - unitsBought;
@@ -366,13 +398,13 @@ void *client(void *tid)
             break;
         case 3:
             while (unitsCoffeeC <= 3) {
-                sem_post(&semRestock);
+                sem_post(&semRestock); // vai fazer restock do café
                 pthread_mutex_unlock(&someMutex);
-                sem_wait(&semAvailableProduct);
+                sem_wait(&semAvailableProduct); // já tamos café com stock?
                 pthread_mutex_lock(&someMutex);
             }
             pthread_mutex_unlock(&someMutex);
-            sleep(getRandomNumber(timeToServeCoffeeC) + timeToServeCoffeeC * 0.2);
+            sleep(getRandomNumber(timeToServeCoffeeC) + timeToServeCoffeeC * 0.2); // tá a servir o café...
             pthread_mutex_lock(&someMutex);
 
             unitsCoffeeC = unitsCoffeeC - unitsBought;
@@ -394,10 +426,18 @@ void *client(void *tid)
     sem_post(&semQueueManager);
     pthread_mutex_unlock(&someMutex);
 
-    pthread_exit(tid);
+    //pthread_exit(tid);
     return 0;
 
 }
+
+/*
+
+    function: threadsShop
+
+    Inicialização da thread do gestor de filas e de empregado.
+
+*/
 
 void threadsShop()
 {
@@ -411,6 +451,14 @@ void threadsShop()
     pthread_create(&tEmployee, NULL, employee, NULL);
 }
 
+/*
+
+    function: closeShop
+
+    Fecha a loja e dá por concluído a simulação da mesma.
+
+*/
+
 int closeShop()
 {
     printf("A loja está fechada, mas falta atender os clientes em fila.\n");
@@ -418,15 +466,15 @@ int closeShop()
     //printf("Clientes em fila: %d\n", clientsInLine);
     //printf("Clientes que já sairam da loja: %d\n", clientsLeftStore);
 
-    while ((clientsInLine - clientsLeftStore) != 0)
+    while ((clientsInLine - clientsLeftStore) != 0) // enquanto que ainda houver clientes para atender dentro da loja...
     {
-        // espera que os clientes todos saem da loja
+        // espera ativa
     }
 
     printf("Já não existem clientes.\n");
     printf("Fim da simulação.\n");
 
-    writeStatsToLog();
+    writeStatsToLog(); // escreve estatísticas para o ficheiro de registo
 
     isItOpen = 0;
     //canWriteStats = 1;
@@ -436,18 +484,26 @@ int closeShop()
     exit(0);
 }
 
+/*
+
+    function: *simulatorMessages
+
+    Trata do envio das mensagens entre o simulador para o monitor.
+
+*/
+
 void *simulatorMessages()
 {
     int n;
     char buffer[256];
     //char operation[64];
-    //Ciclo que fica a espera das respostas do Simulador para apresentar os seus resultados
-    while (1)
+    
+    while (1) // está sempre a tentar enviar qualquer coisa do simulador para o monitor
     {
 
         //timeCounter++;
 
-        if ((n = recv(sockfd, operation, sizeof(operation), 0)) > 0)
+        if ((n = recv(sockfd, operation, sizeof(operation), 0)) > 0) // tá a enviar direito?
         {
             buffer[n] = '\0';
             operation[n] = '\0';
@@ -495,47 +551,13 @@ void *simulatorMessages()
 
 /*
 
-Criação da ligação entre o monitor (servidor) e o simulador (cliente).
+    function: startSimulatorClientSocket
+
+    Cria um canal de comunicação (com sockets) entre o monitor e o simulador.
 
 */
 
-int simLength;
-int simSocketConnection;
-
-int startSimulatorClientSocket()
-{
-
-    // create a socket
-
-    if ((simSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-    {
-        printf("Não foi possível criar a socket.\n");
-        return -1;
-    }
-
-    printf("Socket foi criada.\n");
-
-    // specify an address for the socket
-    //struct sockaddr_in simSocketAddress;
-    bzero((char *)&simSocketAddress, sizeof(simSocketAddress));
-    simSocketAddress.sun_family = AF_UNIX;
-    //simSocketAddress.sun_port = htons(PORT);
-    strcpy(simSocketAddress.sun_path, UNIXSTR_PATH);
-    //simSocketAddress.sun_addr.s_addr = INADDR_ANY;
-    simLength = strlen(simSocketAddress.sun_path) + sizeof(simSocketAddress.sun_family);
-
-    if (connect(simSocket, (struct sockaddr *)&simSocketAddress, simLength) < 0)
-    {
-        printf("Conexão falhada.\n");
-        return -1;
-    }
-
-    printf("Conexão feita.\n");
-
-    return 0;
-}
-
-void socketStartPleaseClient()
+void startSimulatorClientSocket()
 {
 
     if ((sockfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
@@ -553,6 +575,14 @@ void socketStartPleaseClient()
     }
 }
 
+/*
+
+    function: threadMessage
+
+    Inicialização da thread que trata das mensagens enviadas do simulador para o monitor.
+
+*/
+
 void threadMessage()
 {
 
@@ -560,6 +590,14 @@ void threadMessage()
     //pthread_create(&tMessages, NULL, &recMSG, NULL);
     pthread_create(&tMessages, NULL, &simulatorMessages, NULL);
 }
+
+/*
+
+    function: startSemaphores
+
+    Inicialização dos semáforos.
+
+*/
 
 void startSemaphores() {
 
@@ -572,57 +610,64 @@ void startSemaphores() {
     
 }
 
-int h = 0;
+/* int h = 0;
 int g = 0;
 
-/* void insertClientArray() {
+void insertClientArray() {
     pthread_create(&tClient[g], NULL, client, NULL);
     g++;
 } */
+
+/*
+
+    function: main
+
+    Programa principal
+
+*/
 
 void main()
 {
 
     initSimulation();
 
-    //startSimulatorSocket();
-    //startSimulatorServerSocket();
-    socketStartPleaseClient();
+    startSimulatorClientSocket();
 
     threadMessage();
     startSemaphores();
 
-    while (!isItOpen)
+    while (!isItOpen) // a espera que a simulação inicie para o monitor avanaçar...
     {
-        sleep(1); // a espera que a simulação inicie pelo monitor
+        // espera ativa
     }
 
-    // inicialização de variáveis devido ao começo da simulação
+    openingTime = time(0); // tempo de abertura da loja (NOTA: atribuições com o time() são em UNIXTIME)
 
-    openingTime = time(0);
-    closingTime = openingTime + durationOpen;
+    // o tempo de encerramento da loja é a soma do tempo da abertura da loja com a duração que a loja vai
+    // estar aberta. O último é definido previamente no ficheiro de configuração.
+    closingTime = openingTime + durationOpen; 
 
     threadsShop();
 
-    while(time(0) < closingTime) {
+    while(time(0) < closingTime) { // já podemos fechar a loja?
 
-        while(simPause) {
-            //
+        while(simPause) { // a simulação pode ficar em pausa
+            // espera ativa
         }
 
         pthread_create(&tClient, NULL, client, NULL);
         //insertClientArray();
 
-        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
+        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5); // método de criar clientes de vez em quando
 
     }
 
     // faz um ciclo for para fazer "join" nas threads todas. as threads ficam guardadas num array
     //pthread_join(&tClient, )
 
-/*     for(int h = 0; h < g; h++) {
+/*     for(h = 0; h < g; h++) {
         pthread_join(tClient[h], NULL);
-    }     */
+    } */
 
     closeShop();
 
