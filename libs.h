@@ -15,6 +15,9 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include <netdb.h>
+#include <ctype.h>
+
 // Macros
 
 #define UNIXSTR_PATH "/tmp/str_r"

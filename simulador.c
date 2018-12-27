@@ -405,7 +405,7 @@ void threadsShop()
     pthread_t tClientManager;
     pthread_create(&tClientManager, NULL, &clientManager, NULL);
 
-    //pthread_t tClient;
+    //pthread_t *tClient;
 
     pthread_t tEmployee;
     pthread_create(&tEmployee, NULL, employee, NULL);
@@ -572,6 +572,14 @@ void startSemaphores() {
     
 }
 
+int h = 0;
+int g = 0;
+
+/* void insertClientArray() {
+    pthread_create(&tClient[g], NULL, client, NULL);
+    g++;
+} */
+
 void main()
 {
 
@@ -603,19 +611,19 @@ void main()
         }
 
         pthread_create(&tClient, NULL, client, NULL);
-        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
+        //insertClientArray();
 
-        printf("Closing time: %d\n", closingTime);
-        printf("Actual time: %ld\n", time(NULL));
+        sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
 
     }
 
     // faz um ciclo for para fazer "join" nas threads todas. as threads ficam guardadas num array
     //pthread_join(&tClient, )
+
+/*     for(int h = 0; h < g; h++) {
+        pthread_join(tClient[h], NULL);
+    }     */
+
     closeShop();
 
-}
-
-int insertClientArray(void *tid) {
-    
 }
