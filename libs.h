@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <math.h>
-
 #include <netdb.h>
 #include <ctype.h>
 
@@ -50,6 +49,10 @@ int avgTimeWaitingClientsInLine;
 int totalWithdrawls;
 int totalChangedOrder;
 int maxEmployeesUsed;
+
+int unitsCoffeeA;
+int unitsCoffeeB;
+int unitsCoffeeC;
 int unitsSoldCoffeeA;
 int unitsSoldCoffeeB;
 int unitsSoldCoffeeC;
@@ -64,9 +67,6 @@ int waitingTimeInLine;
 int maxClientsPerEmployee;
 int actualEmployeesUsedNow = 1;
 int clientsLeftStore;
-int unitsCoffeeA;
-int unitsCoffeeB;
-int unitsCoffeeC;
 int stockWarehouse;
 int idClient = 0;
 int probWithdrawl;
@@ -103,7 +103,6 @@ int monLength;
 int monSocket;
 int simSocketAddressLength;
 
-
 // Sockets
 
 struct sockaddr_un serverAddr;
@@ -134,6 +133,15 @@ sem_t semAvailableProduct;
 
 // Funções personalizadas
 
+/*
+
+    function: getTimeStamp
+
+    Pega no tempo atual em UNIXTIME e converte para formato "legível", ou seja, em horas,
+    em minutos e segundos.
+
+*/
+
 char* getTimeStamp() {
 
     // Get current time
@@ -145,6 +153,14 @@ char* getTimeStamp() {
     return hmsTimeStamp;
 }
 
+/*
+
+    function: cleanLogFile
+
+    Apenas limpa o conteúdo do ficheiro de registo.
+
+*/
+
 void cleanLogFile() {
 
     FILE * logFile = fopen("log.txt", "w"); // A flag "w" cria um novo ficheiro de raíz
@@ -153,6 +169,16 @@ void cleanLogFile() {
     printf("limpei logfile\n");
 
 }
+
+/*
+
+    function: writeLogFiles
+
+    writeToLog: conteúdo para escrever no ficheiro de registo
+
+    Escreve no ficheiro de registo em conjunto com o respetivo timestamp
+
+*/
 
 void writeLogFiles(char* writeToLog) {
 
@@ -168,6 +194,14 @@ void writeLogFiles(char* writeToLog) {
     // closeFile(logFile);
 }
 
+/*
+
+    function: openLogFile
+
+    Abre a stream para escrever no ficheiro de registo
+
+*/
+
 void openLogFile() {
 
     logFile = fopen("log.txt", "a");
@@ -176,11 +210,31 @@ void openLogFile() {
 
 }
 
+/*
+
+    function: closeFile
+
+    fileToClose: ficheiro para fechar a stream de escrita
+
+    Fecha a stream de escrita de um dado ficheiro
+
+*/
+
 void closeFile(FILE* fileToClose) {
 
     fclose(fileToClose);
 
 }
+
+/*
+
+    function: getRandomNumber
+
+    maxNumber: número máximo que o número aleatório não pode ultrapassar
+
+    Gera um número aleatório de 1 a maxNumber
+
+*/
 
 int getRandomNumber(int maxNumber) {
 
@@ -197,6 +251,14 @@ int getRandomNumber(int maxNumber) {
     return randomNumber;
 
 }
+
+/*
+
+    function: writeStatsToLog
+
+    Escreve estatísticas da simulação para o ficheiro de registo
+
+*/
 
 void writeStatsToLog() {
 
