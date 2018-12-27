@@ -193,3 +193,61 @@ int getRandomNumber(int maxNumber) {
     return randomNumber;
 
 }
+
+void writeStatsToLog() {
+
+    if((createdClients - clientsInLine) != 0) {
+        avgTimeWaitingClientsInLine = waitingTimeInLine / (createdClients - clientsInLine);
+    }
+
+    if(unitsSoldCoffeeA != 0) {
+        avgTimeToServeCoffeeA = timeToServeCoffeeA / unitsSoldCoffeeA;
+    }
+
+    if(unitsSoldCoffeeB != 0) {
+        avgTimeToServeCoffeeB = timeToServeCoffeeB / unitsSoldCoffeeB;
+    }
+
+    if(unitsSoldCoffeeC != 0) {
+        avgTimeToServeCoffeeC = timeToServeCoffeeC / unitsSoldCoffeeC;
+    }
+
+    //currentTime = time(NULL);
+
+    //if (logFile == NULL) {
+        //open(logFile, "a+");
+    //}
+
+    fprintf(logFile, "┌─────────────────────────────────────────────────────────────┐\n");
+    fprintf(logFile, "│                         Estatisticas                        │\n");
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│ ### Geral ###                                               │\n");
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│Duração da simulação: %d                                     │\n", currentTime-timeStartOfSimulation);
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│ ### Clientes ###                                            │\n");
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│Clientes criados na simulação: %d                            │\n", createdClients);
+    fprintf(logFile, "│Clientes à espera na fila: %d                                │\n", clientsInLine);
+    fprintf(logFile, "│Tempo médio de espera em fila: %d                            │\n", avgTimeWaitingClientsInLine);
+    fprintf(logFile, "│Clientes que mudaram o seu pedido: %d                        │\n", totalChangedOrder);
+    fprintf(logFile, "│Clientes que desistiram: %d                                  │\n", totalWithdrawls);
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│ ### Empregados ###                                          │\n");
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│Empregados ao serviço no máximo: %d                          │\n", maxEmployeesUsed);
+    fprintf(logFile, "│Empregados ao serviço: %d                                    │\n", actualEmployeesUsedNow);
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│ ### Cafés ###                                               │\n");
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+    fprintf(logFile, "│Vendas do café 1: %d                                         │\n", unitsSoldCoffeeA);
+    fprintf(logFile, "│Vendas do café 2: %d                                         │\n", unitsSoldCoffeeB);
+    fprintf(logFile, "│Vendas do café 3: %d                                         │\n", unitsSoldCoffeeC);
+    fprintf(logFile, "│Tempo médio de serviço do café 1: %d                         │\n", avgTimeToServeCoffeeA);
+    fprintf(logFile, "│Tempo médio de serviço do café 2: %d                         │\n", avgTimeToServeCoffeeB);
+    fprintf(logFile, "│Tempo médio de serviço do café 3: %d                         │\n", avgTimeToServeCoffeeC);
+    fprintf(logFile, "├─────────────────────────────────────────────────────────────┤\n");
+
+    fclose(logFile);
+
+}

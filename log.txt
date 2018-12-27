@@ -1,4 +1,60 @@
-16:44:40 O cliente 0 acabou de chegar.
-16:44:42 O cliente 0 pediu 2 unidades do café 3.
-16:44:44 O cliente 1 acabou de chegar.
-16:44:48 O cliente 0 recebeu 2 unidades do café 3.
+18:00:54 O cliente 0 acabou de chegar.
+18:00:56 O cliente 0 pediu 3 unidades do café 3.
+18:01:03 O cliente 0 alterou o seu pedido e pediu 3 unidades do café 2.
+18:01:04 O cliente 1 acabou de chegar.
+18:01:05 O cliente 2 acabou de chegar.
+18:01:06 O cliente 3 acabou de chegar.
+18:01:07 O cliente 4 acabou de chegar.
+18:01:08 O cliente 5 acabou de chegar.
+18:01:09 O cliente 6 acabou de chegar.
+18:01:10 O cliente 7 acabou de chegar.
+18:01:11 O cliente 8 acabou de chegar.
+18:01:12 O cliente 9 acabou de chegar.
+18:01:13 O cliente 10 acabou de chegar.
+18:01:14 O cliente 11 acabou de chegar.
+18:01:15 O cliente 12 acabou de chegar.
+18:01:15 O cliente 0 recebeu 3 unidades do café 2.
+18:01:16 O cliente 13 acabou de chegar.
+18:01:17 O cliente 14 acabou de chegar.
+18:01:17 O funcionário 4 foi posto no serviço.
+18:01:20 O cliente 1 pediu 1 unidades do café 3.
+18:01:23 O cliente 1 alterou o seu pedido e pediu 2 unidades do café 1.
+18:01:24 O cliente 2 desistiu.
+18:01:25 O cliente 3 desistiu.
+18:01:25 O cliente 1 recebeu 2 unidades do café 1.
+18:01:25 O funcionário 4 deixou o serviço.
+18:01:26 O cliente 4 desistiu.
+18:01:29 O cliente 5 pediu 3 unidades do café 1.
+18:01:32 O cliente 5 alterou o seu pedido e pediu 1 unidades do café 2.
+18:01:33 6 unidades do café 2 foram repostas.
+18:01:37 O cliente 5 recebeu 1 unidades do café 2.
+18:01:38 O cliente 6 desistiu.
+┌─────────────────────────────────────────────────────────────┐
+│                         Estatisticas                        │
+├─────────────────────────────────────────────────────────────┤
+│ ### Geral ###                                               │
+├─────────────────────────────────────────────────────────────┤
+│Duração da simulação: 0                                     │
+├─────────────────────────────────────────────────────────────┤
+│ ### Clientes ###                                            │
+├─────────────────────────────────────────────────────────────┤
+│Clientes criados na simulação: 0                            │
+│Clientes à espera na fila: 7                                │
+│Tempo médio de espera em fila: 0                            │
+│Clientes que mudaram o seu pedido: 0                        │
+│Clientes que desistiram: 0                                  │
+├─────────────────────────────────────────────────────────────┤
+│ ### Empregados ###                                          │
+├─────────────────────────────────────────────────────────────┤
+│Empregados ao serviço no máximo: 0                          │
+│Empregados ao serviço: 3                                    │
+├─────────────────────────────────────────────────────────────┤
+│ ### Cafés ###                                               │
+├─────────────────────────────────────────────────────────────┤
+│Vendas do café 1: 0                                         │
+│Vendas do café 2: 0                                         │
+│Vendas do café 3: 0                                         │
+│Tempo médio de serviço do café 1: 0                         │
+│Tempo médio de serviço do café 2: 0                         │
+│Tempo médio de serviço do café 3: 0                         │
+├─────────────────────────────────────────────────────────────┤

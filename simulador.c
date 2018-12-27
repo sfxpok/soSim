@@ -263,6 +263,7 @@ void *client(void *tid)
 
     //printf("O cliente %d acabou de chegar às %s.\n", id, getTimeStamp());
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d acabou de chegar.\n", id);
+    //printf("### Cliente foi criado. (thread) ###\n");
     writeLogFiles(messageToLog);
 
 	sprintf(bufferMonitor, "ClientArrived %d %s", id, getTimeStamp());
@@ -425,19 +426,17 @@ int closeShop()
     printf("Já não existem clientes.\n");
     printf("Fim da simulação.\n");
 
+    writeStatsToLog();
+
     isItOpen = 0;
-    canWriteStats = 1;
+    //canWriteStats = 1;
     //while(1);
-    //close(simSocket);
+    close(simSocket);
 
     exit(0);
 }
 
-// copypasta
-
-//int runStore;
-
-void *pasta()
+void *simulatorMessages()
 {
     int n;
     char buffer[256];
@@ -559,7 +558,7 @@ void threadMessage()
 
     pthread_t tMessages;
     //pthread_create(&tMessages, NULL, &recMSG, NULL);
-    pthread_create(&tMessages, NULL, &pasta, NULL);
+    pthread_create(&tMessages, NULL, &simulatorMessages, NULL);
 }
 
 void startSemaphores() {
@@ -590,10 +589,6 @@ void main()
         sleep(1); // a espera que a simulação inicie pelo monitor
     }
 
-    //pthread_mutex_lock(&monitorFlag);
-    //pthread_mutex_unlock(&monitorFlag);
-
-
     // inicialização de variáveis devido ao começo da simulação
 
     openingTime = time(0);
@@ -604,14 +599,23 @@ void main()
     while(time(0) < closingTime) {
 
         while(simPause) {
-            //sleep(1);
+            //
         }
 
         pthread_create(&tClient, NULL, client, NULL);
         sleep((rand() % avgTimeArrivalClients + 1) + avgTimeArrivalClients * 0.5);
 
+        printf("Closing time: %d\n", closingTime);
+        printf("Actual time: %ld\n", time(NULL));
+
     }
 
+    // faz um ciclo for para fazer "join" nas threads todas. as threads ficam guardadas num array
+    //pthread_join(&tClient, )
     closeShop();
 
+}
+
+int insertClientArray(void *tid) {
+    
 }

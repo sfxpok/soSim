@@ -77,7 +77,7 @@ void displayStats()
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
-void writeStatsToLog() {
+/* void writeStatsToLog() {
 
     if((createdClients - clientsInLine) != 0) {
         avgTimeWaitingClientsInLine = waitingTimeInLine / (createdClients - clientsInLine);
@@ -133,7 +133,7 @@ void writeStatsToLog() {
 
     fclose(logFile);
 
-}
+} */
 
 int sendMessageSocket() {
 
