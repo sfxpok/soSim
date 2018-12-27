@@ -1,5 +1,13 @@
 #include "libs.h"
 
+/*
+
+    function: displayHeader
+
+    Mostra no terminal o cabeçalho do menu
+
+*/
+
 void displayHeader()
 {
     printf("┌─────────────────────────────────────────────────────────────┐\n");
@@ -7,6 +15,14 @@ void displayHeader()
     printf("│                Sistemas Operativos 2018/2019                │\n");
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
+
+/*
+
+    function: displayMenu
+
+    Mostra no terminal o menu
+
+*/
 
 void displayMenu()
 {
@@ -21,27 +37,31 @@ void displayMenu()
     printf("├─────────────────────────────────────────────────────────────┤\n");
 }
 
+/*
+
+    function: displayStats
+
+    Mostra no terminal as estatísticas da simulação
+
+*/
+
 void displayStats()
 {
 
-    // põe qualquer coisa aqui para escrever no ficheiro de log dude
-
-    // cuidado que esta função está incompleta
-
     if((createdClients - clientsInLine) != 0) {
-        avgTimeWaitingClientsInLine = waitingTimeInLine / (createdClients - clientsInLine);
+        avgTimeWaitingClientsInLine = waitingTimeInLine / (createdClients - clientsInLine); // cálculo do tempo média de espera na fila
     }
 
     if(unitsSoldCoffeeA != 0) {
-        avgTimeToServeCoffeeA = timeToServeCoffeeA / unitsSoldCoffeeA;
+        avgTimeToServeCoffeeA = timeToServeCoffeeA / unitsSoldCoffeeA; // cálculo do tempo médio para servir o café 1
     }
 
     if(unitsSoldCoffeeB != 0) {
-        avgTimeToServeCoffeeB = timeToServeCoffeeB / unitsSoldCoffeeB;
+        avgTimeToServeCoffeeB = timeToServeCoffeeB / unitsSoldCoffeeB; // cálculo do tempo médio para servir o café 2
     }
 
     if(unitsSoldCoffeeC != 0) {
-        avgTimeToServeCoffeeC = timeToServeCoffeeC / unitsSoldCoffeeC;
+        avgTimeToServeCoffeeC = timeToServeCoffeeC / unitsSoldCoffeeC; // cálculo do tempo médio para servir o café 3
     }
 
     currentTime = time(NULL);
@@ -135,6 +155,14 @@ void displayStats()
 
 } */
 
+/*
+
+    function: sendMessageSocket
+
+    Envia uma mensagem (em particular, uma operação do menu) para o simulador.
+
+*/
+
 int sendMessageSocket() {
 
     if (send(newsockfd, operation, sizeof(operation), 0) == -1)
@@ -146,6 +174,15 @@ int sendMessageSocket() {
 
     return 0;
 }
+
+/*
+
+    function: askForInputString
+
+    Processa que operação é que o utilizador quer realizar no programa
+
+
+*/
 
 void askForInputString()
 {
@@ -171,6 +208,8 @@ void askForInputString()
             sendMessageSocket();
         }
 
+        // printlog não funciona!
+
         if (!strcmp(operation, "printlog\n")) {
             if (canWriteStats) {
                 writeStatsToLog();
@@ -182,16 +221,24 @@ void askForInputString()
     } while (strcmp(operation, "quit\n"));
 }
 
+/*
+
+    function: openServerSocket
+
+    Cria um canal de comunicação entre o monitor (servidor) e o simulador (cliente).
+
+*/
+
 int openServerSocket()
 {
 
     if ((sockfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
     {
-        printf("Não deu para criar o socket dude.\n");
+        printf("Não consigo criar o socket.\n");
         return -1;
     }
 
-    printf("Socket criado dude.\n");
+    printf("Socket criado.\n");
 
     bzero((char *)&serverAddr, sizeof(serverAddr));
     serverAddr.sun_family = AF_UNIX;
@@ -225,9 +272,17 @@ int openServerSocket()
     return 0;
 }
 
-void openForAppend() {
+/* void openForAppend() {
     logFile = fopen("log.txt", "a+");
-}
+} */
+
+/*
+
+    function: *getMonitorMessages
+
+    Recebe as mensagens que vêem do simulador.
+
+*/
 
 void *getMonitorMessages(void *tid)
 {
@@ -345,7 +400,7 @@ void *getMonitorMessages(void *tid)
                 printf("%s - O cliente %d pediu %d unidades do café %d.\n", getTimeStamp(), someIntegerA, someIntegerB, someIntegerC);
 
                 clientsInLine--;
-                waitingTimeInLine += someIntegerD;
+                waitingTimeInLine += someIntegerD; // tá a somar o tempo que o cliente esperou
 
             }
 
@@ -370,16 +425,16 @@ void *getMonitorMessages(void *tid)
                 printf("%s - O cliente %d recebeu o café %d de %d unidades.\n", getTimeStamp(), someIntegerA, someIntegerC, someIntegerB);
 
                 if (someIntegerC == 1) {
-                    timeToServeCoffeeA += someIntegerD;
-                    unitsSoldCoffeeA += someIntegerB;
+                    timeToServeCoffeeA += someIntegerD; // tá a somar o tempo que levou para servir o cliente
+                    unitsSoldCoffeeA += someIntegerB; // tá a somar quantas unidades do café A vendeu
                 }
                 else if (someIntegerC == 2) {
-                    timeToServeCoffeeB += someIntegerD;
-                    unitsSoldCoffeeB += someIntegerB;
+                    timeToServeCoffeeB += someIntegerD; // tá a somar o tempo que levou para servir o cliente
+                    unitsSoldCoffeeB += someIntegerB; // tá a somar quantas unidades do café B vendeu
                 }
                 else {
-                    timeToServeCoffeeC += someIntegerD;
-                    unitsSoldCoffeeC += someIntegerB;
+                    timeToServeCoffeeC += someIntegerD; // tá a somar o tempo que levou para servir o cliente
+                    unitsSoldCoffeeC += someIntegerB; // tá a somar quantas unidades do café C vendeu
                 }
 
             }
@@ -393,8 +448,6 @@ void *getMonitorMessages(void *tid)
 
                 printf("%s - %d unidades do café %d foram repostas.\n", getTimeStamp(), someIntegerA, someIntegerB);
 
-                // tira os cafés do armazém?
-
             }
 
         } while (!error);
@@ -404,12 +457,28 @@ void *getMonitorMessages(void *tid)
 
 }
 
+/*
+
+    function: startMessageThread
+
+    Inicializa a thread que trata das mensagens que vêem do simulador.
+
+*/
+
 void startMessageThread()
 {
 
     pthread_t tMessages;
     pthread_create(&tMessages, NULL, &getMonitorMessages, &newsockfd);
 }
+
+/*
+
+    function: shutdownMonitor
+
+    Desliga o monitor. Este desliga-se após o simulador desligar.
+
+*/
 
 void shutdownMonitor() {
 
@@ -423,6 +492,14 @@ void shutdownMonitor() {
 
     exit(0);
 }
+
+/*
+
+    function: main
+
+    Programa principal
+
+*/
 
 void main()
 {

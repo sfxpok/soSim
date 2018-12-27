@@ -553,7 +553,7 @@ void *simulatorMessages()
 
     function: startSimulatorClientSocket
 
-    Cria um canal de comunicação (com sockets) entre o monitor e o simulador.
+    Cria um canal de comunicação entre o simulador (cliente) e o monitor (servidor).
 
 */
 
