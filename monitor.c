@@ -365,17 +365,17 @@ void *getMonitorMessages(void *tid)
             if (!strcmp(eventMessage, "AddEmployee")) {
                 //openForAppend();
 
-				/* if(logFile != NULL)
-				{					
-					fprintf(logFile,"%s - O empregado %d foi adicionado.\n", getTimeStamp(), someIntegerA);
-					fclose(logFile);
-				} */
-				printf("%s - O funcionário numero %d foi adicionado.\n", getTimeStamp(), someIntegerA);
-				actualEmployeesUsedNow++;
-				if(actualEmployeesUsedNow > maxEmployeesUsed)
-				{
-					maxEmployeesUsed = actualEmployeesUsedNow;
-				}
+                /* if(logFile != NULL)
+                {					
+                    fprintf(logFile,"%s - O empregado %d foi adicionado.\n", getTimeStamp(), someIntegerA);
+                    fclose(logFile);
+                } */
+                printf("%s - O funcionário numero %d foi adicionado.\n", getTimeStamp(), someIntegerA);
+                actualEmployeesUsedNow++;
+                if(actualEmployeesUsedNow > maxEmployeesUsed)
+                {
+                    maxEmployeesUsed = actualEmployeesUsedNow;
+                }
             }
 
             if (!strcmp(eventMessage, "RemoveEmployee")) {

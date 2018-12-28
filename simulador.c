@@ -297,10 +297,10 @@ void *client(void *tid)
     //printf("### Cliente foi criado. (thread) ###\n");
     writeLogFiles(messageToLog);
 
-	sprintf(bufferMonitor, "ClientArrived %d %s", id, getTimeStamp());
-	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+    sprintf(bufferMonitor, "ClientArrived %d %s", id, getTimeStamp());
+    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
-	pthread_mutex_unlock(&someMutex);
+    pthread_mutex_unlock(&someMutex);
 
     sem_wait(&semEmployee); // há um funcionário que vai atender um cliente, logo o semáforo decrementa
     pthread_mutex_lock(&someMutex);
@@ -317,13 +317,13 @@ void *client(void *tid)
             snprintf(messageToLog, sizeof(messageToLog), "O cliente %d desistiu.\n", id);
             writeLogFiles(messageToLog);
             
-	        sprintf(bufferMonitor, "GiveUpClient %d %s", id, getTimeStamp());
-	        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+            sprintf(bufferMonitor, "GiveUpClient %d %s", id, getTimeStamp());
+            send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
             clientsLeftStore++;
 
             sem_post(&semQueueManager);
-			pthread_mutex_unlock(&someMutex);
+            pthread_mutex_unlock(&someMutex);
 
             return NULL; // cliente desistiu...
 
@@ -332,7 +332,7 @@ void *client(void *tid)
     }
 
     pthread_mutex_unlock(&someMutex);
-	pthread_mutex_lock(&someMutex);
+    pthread_mutex_lock(&someMutex);
 
     unitsBought = getRandomNumber(3); // quantas unidades é que o cliente vai comprar?
     coffee = getRandomNumber(3); // qual é o café que o cliente vai comprar?
@@ -343,8 +343,8 @@ void *client(void *tid)
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d pediu %d unidades do café %d.\n", id, unitsBought, coffee);
     writeLogFiles(messageToLog);
 
-	sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
-	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+    sprintf(bufferMonitor, "AskForCoffee %d %d %d %s %ld", id, unitsBought, coffee, getTimeStamp(), waitingTimeInLine);
+    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
     probabilityThreshold = getRandomNumber(100);
 
@@ -362,8 +362,8 @@ void *client(void *tid)
         snprintf(messageToLog, sizeof(messageToLog), "O cliente %d alterou o seu pedido e pediu %d unidades do café %d.\n", id, unitsBought, coffee);
         writeLogFiles(messageToLog);
         
-	    sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
-	    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+        sprintf(bufferMonitor, "ChangedOrder %d %d %d %s", id, unitsBought, coffee, getTimeStamp());
+        send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
         
     }
 
@@ -418,8 +418,8 @@ void *client(void *tid)
     snprintf(messageToLog, sizeof(messageToLog), "O cliente %d recebeu %d unidades do café %d.\n", id, unitsBought, coffee);
     writeLogFiles(messageToLog);
     
-	sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
-	send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
+    sprintf(bufferMonitor, "ReceiveCoffee %d %d %d %s %d", id, unitsBought, coffee, getTimeStamp(), timeToServeClient);
+    send(sockfd, bufferMonitor, sizeof(bufferMonitor), 0);
 
     clientsLeftStore++;
 
